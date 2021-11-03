@@ -83,11 +83,13 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: "row",
         marginBottom: 50,
+        marginHorizontal: 15,
+        justifyContent: "space-between"
+
     },
     pageHeader: {
         fontSize: 40,
         fontWeight: "bold",
-        marginHorizontal: 15,
         marginTop: 20,
         color: "grey"
     },
@@ -96,7 +98,6 @@ const styles = StyleSheet.create({
         width: 70,
         height: 30,
         borderRadius: 15,
-        marginLeft: 150,
         marginTop: 33,
         shadowColor: "red",
         shadowOpacity: 0.5,
