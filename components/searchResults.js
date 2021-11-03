@@ -31,8 +31,8 @@ const searchResult = ({navigation, route}) => {
         )
     }
 
-    const handleSelectResult = id => {
-
+    const handleSelectResult = (id, item) => {
+        navigation.navigate("Ride Details", {id, item})
     }
 
     const resultArray = Object.values(searchResults);
@@ -43,7 +43,7 @@ const searchResult = ({navigation, route}) => {
                 <FlatList data={resultArray} keyExtractor={(item, index) => resultKeys[index]} renderItem={({item, index}) => {
                     return (
                         <View>
-                        <TouchableOpacity style={styles.container} onPress={() => handleSelectResult(resultKeys[index])}>
+                        <TouchableOpacity style={styles.container} onPress={() => handleSelectResult(resultKeys[index], item)}>
                             <RideView name={item.name} from={item.startAddress} to={item.endAddress} date={item.date} speed={item.speed} latitude={item.startLatitude} longitude={item.startLongitude}/>
                         </TouchableOpacity>
                         </View>

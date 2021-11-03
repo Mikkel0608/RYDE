@@ -36,12 +36,12 @@ const RideView = (props) => {
                             </Marker>
                     </MapView>
                     <View style={styles.mapBlocker}>
+                        <View style={styles.rideNameContainer}>
+                            <Text style={styles.rideName}> {props.name}</Text>
+                        </View>
                     </View>
             </View>
             <View style={styles.textContainer}>
-                <View style={styles.row}>
-                    <Text>Name: {props.name}</Text>
-                </View>
                 <View style={styles.row}>
                     <Text> From: {props.from}</Text>
                     <Text> To: {props.to}</Text>
@@ -77,10 +77,11 @@ const styles = StyleSheet.create({
     },
     textContainer: {
         marginBottom: 10,
+        backgroundColor: "white",
 
     },
     row: {
-        marginVertical: 5,
+        marginVertical: 10,
         marginHorizontal: 5,
         flexDirection: "row",
         justifyContent: "space-between",
@@ -92,6 +93,7 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
         zIndex: -1,
+        height: "125%",
     },
     mapBlocker: {
         position: "absolute",
@@ -99,6 +101,17 @@ const styles = StyleSheet.create({
         height: "100%",
         backgroundColor: 'rgba(240, 52, 52, 0.2)',
         zIndex: 1,
+    },
+    rideNameContainer: {
+        position: "absolute",
+        bottom: 0,
+    },
+    rideName: {
+        position: "absolute",
+        bottom: 10,
+        left: 5,
+        color: "white",
+        fontSize: 30,
     }
 });
 

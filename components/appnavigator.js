@@ -13,6 +13,7 @@ import Profile from "./profile";
 import searchResult from "./searchResults";
 import MapScreen from "./mapScreen";
 import {SafeAreaView} from "react-native";
+import RideDetails from "./rideDetails";
 
 
 const AppNavigator = ({navigation}) => {
@@ -28,6 +29,7 @@ const AppNavigator = ({navigation}) => {
                 <Stack.Screen name="Pick start location" component={MapScreen} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
                 <Stack.Screen name="Pick destination" component={MapScreen} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
                 <Stack.Screen name="Search Results" component={searchResult} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
+                <Stack.Screen name="Ride Details" component={RideDetails} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
             </Stack.Navigator>
         )
     }
