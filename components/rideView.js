@@ -61,14 +61,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderColor: "black",
         borderRadius: 20,
-        shadowColor: "black",
-        shadowOpacity: 0.5,
-        shadowOffset: {
-            height: 2,
-        },
-        shadowRadius: 3.84,
         marginHorizontal: 25,
         marginVertical: 15,
+        overflow: "hidden",
+        borderWidth: 0.2,
+        borderBottomColor: "grey",
+        borderTopColor: "grey",
+        borderRightColor: "grey",
+        borderLeftColor: "grey",
     },
     mapContainer: {
         height: 150,
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         width: "100%",
         height: "100%",
-        backgroundColor: 'rgba(52, 52, 52, 0.5)',
+        backgroundColor: 'rgba(240, 52, 52, 0.2)',
         zIndex: 1,
     }
 });
