@@ -18,7 +18,6 @@ const RideDetails = ({navigation, route}) => {
     attendees = attendees.filter(function(x) {
         return x !== undefined;
     });
-    console.log(attendees)
 
 
     useEffect(() => {
@@ -28,10 +27,9 @@ const RideDetails = ({navigation, route}) => {
 
 
     const handleJoinRide = () => {
-        if(attendees.find(id => id = user.uid) === undefined){
-            console.log('ja')
-        }
-        if (user.uid !== attendees[0] ){
+
+        /*Tjekker om brugeren allerede er tilmeldt*/
+       if(attendees.find(id => id == user.uid) == undefined){
             firebase
                 .database()
                 .ref('Rides/'+route.params.id+'/attendees')
@@ -41,7 +39,6 @@ const RideDetails = ({navigation, route}) => {
         }else {
             console.log("du er allerede tilmeldt")
         }
-
     }
 
 
@@ -50,7 +47,11 @@ const RideDetails = ({navigation, route}) => {
     return (
         <View>
             <Text>Dette er ride details for ride navn: {route.params.item.name} og id: {route.params.id}</Text>
+            <Text>Organiseret af: {route.params.item.organizer}</Text>
+
             <Text>Curr user: {user.uid}</Text>
+            <Text>attendees: {attendees.length}</Text>
+
 
             <TouchableOpacity style={styles.signOutButton} onPress={handleJoinRide}>
                 <Text style={styles.signOutButtonText}>Join ride!</Text>
