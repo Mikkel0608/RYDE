@@ -34,7 +34,7 @@ const RideDetails = ({navigation, route}) => {
         if (user.uid !== attendees[0] ){
             firebase
                 .database()
-                .ref(Rides/${route.params.id}/attendees)
+                .ref('Rides/'+route.params.id+'/attendees')
                     .push(user.uid);
 
             console.log("Ride joined")
