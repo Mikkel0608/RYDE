@@ -24,7 +24,7 @@ const NewRide = ({navigation, route}) => {
     useEffect(() => {
         const user = firebase.auth().currentUser;
         setNewRide({...newRide,
-            organizer: user.uid,
+            organizer: {uid: user.uid, username: user.displayName},
             attendees: [newRide.attendees, {uid: user.uid, username: user.displayName}],
         })
         if(route.params?.startAddress) {
