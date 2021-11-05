@@ -3,17 +3,24 @@ import {Text, View, Image, StyleSheet, TextInput, TouchableOpacity, Alert} from 
 import {createStackNavigator} from "@react-navigation/stack";
 import firebase from "firebase";
 
-const LoginPage = ({navigation}) => {
+const SignUpPage = ({navigation}) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [username, setUsername] = useState('');
 
     const handleSignup = async() => {
         try {
-            await firebase.auth().createUserWithEmailAndPassword(email, password).then((data)=>{
+            //Sending email and password to firebase for signup
+            await firebase.auth().createUserWithEmailAndPassword(email, password).then((user)=>{
+                user.user.updateProfile({displayName:username}).then(() => {
+                    //Brugerens username er blevet tilkoblet
+                }).catch((error) => {
+                    Alert.alert("An error has occured: " + error.message)
+                })
             });
         } catch (error){
-            Alert.alert("An error occurred:" + error.message)
+            Alert.alert("An error occurred: " + error.message)
         }
     }
 
@@ -21,13 +28,18 @@ const LoginPage = ({navigation}) => {
         <View style={styles.container}>
             <View style={styles.loginContainer}>
                 <Text style={styles.loginHeader}> Sign Up </Text>
-                <Text style={styles.loginText}> Email </Text>
+                <Text style={styles.loginText}>Username</Text>
+                <TextInput style={styles.input}
+                           placeholder={"Type in username"}
+                           onChangeText={(username) => setUsername(username)}
+                />
+                <Text style={styles.loginText}>Email</Text>
                 <TextInput style={styles.input}
                            placeholder={"Type in email"}
                            onChangeText={(email) => setEmail(email)}
                            keyboardType={"email-address"}
                 />
-                <Text style={styles.loginText}> Password</Text>
+                <Text style={styles.loginText}>Password</Text>
                 <TextInput style={styles.input}
                            placeholder={"Type in password"}
                            secureTextEntry={true}
@@ -96,4 +108,4 @@ const styles = StyleSheet.create({
     }
 )
 
-export default LoginPage;
+export default SignUpPage;

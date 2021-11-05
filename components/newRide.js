@@ -17,31 +17,21 @@ const NewRide = ({navigation, route}) => {
         startLatitude:"",
         startLongitude:"",
         startAddress: "",
-        endLatitude: "",
-        endLongitude:"",
-        endAddress:"",
     };
     const [newRide, setNewRide] = useState(initialState);
 
     //Bruger useEffect til at opdatere organizer og attendees felterne af newRide.
     useEffect(() => {
-        const userUID = firebase.auth().currentUser.uid;
+        const user = firebase.auth().currentUser;
         setNewRide({...newRide,
-            organizer: userUID,
-            attendees: [newRide.attendees, userUID],
+            organizer: user.uid,
+            attendees: [newRide.attendees, {uid: user.uid, username: user.displayName}],
         })
         if(route.params?.startAddress) {
             setNewRide({...newRide,
                 startAddress: route.params?.startAddress,
                 startLatitude: route.params?.startCoordinates.latitude,
                 startLongitude: route.params?.startCoordinates.longitude,
-            })
-        }
-        if (route.params?.endAddress) {
-            setNewRide({...newRide,
-                endAddress: route.params?.endAddress,
-                endLatitude: route.params?.endCoordinates.latitude,
-                endLongitude: route.params?.endCoordinates.longitude,
             })
         }
         //setNewRide({...newRide, attendees: [newRide.attendees, userUID]})
@@ -91,7 +81,7 @@ const NewRide = ({navigation, route}) => {
         //setNewRide({...newRide, attendees: [newRide.attendees, firebase.auth().currentUser.uid]})
         //console.log(newRide.attendees);
         newRide.date = newRide.date.getTime();
-        const {name, date, distance, speed, description, organizer, attendees, startLatitude, startLongitude, startAddress, endAddress, endLatitude, endLongitude} = newRide;
+        const {name, date, distance, speed, description, organizer, attendees, startLatitude, startLongitude, startAddress} = newRide;
         if(name.length === 0 || distance.length === 0 || speed.length === 0 || startAddress === "") {
             Alert.alert("Please fill out both name, distance, speed and start location!")
         } else {
@@ -99,7 +89,7 @@ const NewRide = ({navigation, route}) => {
                 firebase
                     .database()
                     .ref('/Rides/')
-                    .push({ name, date, distance, speed, description, organizer, attendees, startLatitude, startLongitude, startAddress, endLatitude, endLongitude, endAddress});
+                    .push({ name, date, distance, speed, description, organizer, attendees, startLatitude, startLongitude, startAddress});
                 Alert.alert(`Saved`);
                 setNewRide(initialState);
                 navigation.popToTop();

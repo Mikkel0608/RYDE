@@ -55,7 +55,8 @@ const MapScreen = ({navigation, route}) => {
                     <Marker
                         coordinate={coordinate}
                         key={index.toString()}
-                    />
+                    >
+                    </Marker>
                 ))}
             </MapView>
             <View style={styles.addressBox}>

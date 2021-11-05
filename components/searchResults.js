@@ -44,7 +44,7 @@ const searchResult = ({navigation, route}) => {
                     return (
                         <View>
                         <TouchableOpacity style={styles.container} onPress={() => handleSelectResult(resultKeys[index], item)}>
-                            <RideView name={item.name} from={item.startAddress} to={item.endAddress} date={item.date} speed={item.speed} latitude={item.startLatitude} longitude={item.startLongitude}/>
+                            <RideView name={item.name} from={item.startAddress} distance={item.distance} date={item.date} speed={item.speed} latitude={item.startLatitude} longitude={item.startLongitude} attendees={item.attendees}/>
                         </TouchableOpacity>
                         </View>
                     )

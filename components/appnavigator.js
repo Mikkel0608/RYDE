@@ -54,9 +54,9 @@ const AppNavigator = ({navigation}) => {
         <View style={styles.container}>
             <NavigationContainer>
                 <Tab.Navigator screenOptions={{headerShown: false, tabBarActiveTintColor: "red"}}>
-                    <Tab.Screen name={'Home'} component={StackNavigationHome} options={{tabBarIcon: () => ( <Ionicons name="home-outline" size={20} color={"red"}/>)}} />
-                    <Tab.Screen name={'Explore'} component={StackNavigationExplore} options={{tabBarIcon: () => ( <Ionicons name="bicycle-outline" size={20} color={"red"}/>)}}/>
-                    <Tab.Screen name={'You'} component={StackNavigationProfile} options={{tabBarIcon: () => ( <Ionicons name="person-outline" size={20} color={"red"}/>)}} />
+                    <Tab.Screen name={'Home'} component={StackNavigationHome} options={{tabBarIcon: ({color}) => ( <Ionicons name="home-outline" size={20} color={color}/>)}} />
+                    <Tab.Screen name={'Explore'} component={StackNavigationExplore} options={{tabBarIcon: ({color}) => ( <Ionicons name="bicycle-outline" size={20} color={color}/>)}}/>
+                    <Tab.Screen name={'You'} component={StackNavigationProfile} options={{tabBarIcon: ({color}) => ( <Ionicons name="person-outline" size={20} color={color}/>)}} />
                 </Tab.Navigator>
             </NavigationContainer>
             <StatusBar style="auto" />

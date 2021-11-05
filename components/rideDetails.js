@@ -1,5 +1,5 @@
 import React, {useEffect, useState,} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import firebase from "firebase";
 
 const RideDetails = ({navigation, route}) => {
@@ -13,11 +13,10 @@ const RideDetails = ({navigation, route}) => {
 
 
     let attendees = Object.values(route.params.item.attendees);
-
     /*Fjerner undefined værdi fra attendees*/
-    attendees = attendees.filter(function(x) {
-        return x !== undefined;
-    });
+    //attendees = attendees.filter(function(x) {
+     //   return x !== undefined;
+    //});
 
 
     useEffect(() => {
@@ -29,15 +28,15 @@ const RideDetails = ({navigation, route}) => {
     const handleJoinRide = () => {
 
         /*Tjekker om brugeren allerede er tilmeldt*/
-       if(attendees.find(id => id == user.uid) == undefined){
+       if(attendees.filter(e => e.uid === user.uid).length===0){
             firebase
                 .database()
                 .ref('Rides/'+route.params.id+'/attendees')
-                    .push(user.uid);
-
-            console.log("Ride joined")
+                    .push({uid: user.uid, username: user.displayName});
+            navigation.navigate("Explore")
+            Alert.alert("Ride joined")
         }else {
-            console.log("du er allerede tilmeldt")
+            Alert.alert("du er allerede tilmeldt")
         }
     }
 

@@ -1,10 +1,20 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from "react-native";
 import MapView, {Marker} from "react-native-maps";
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
+import Ionicons from "react-native-vector-icons/Ionicons";
+import firebase from "firebase";
 
 const RideView = (props) => {
+    const [joinedRide, setJoinedRide] = useState(false)
+
+    useEffect(() => {
+        //Denne løber igennem attendees array og kigger i hvert object om uid property er ens med den aktive brugers uid
+        if(Object.values(props.attendees).filter(e => e.uid === firebase.auth().currentUser.uid).length>0) {
+            setJoinedRide(true);
+        }
+    },[])
 
     const dateString = () => {
         let date = new Date(props.date)
@@ -31,11 +41,14 @@ const RideView = (props) => {
 
                     >
                             <Marker
-                            coordinate={{latitude: props.latitude, longitude: props.longitude}}
-                            >
+                            coordinate={{latitude: props.latitude, longitude: props.longitude}}>
                             </Marker>
                     </MapView>
                     <View style={styles.mapBlocker}>
+                        {joinedRide === true ?
+                            <View style={styles.joinedRideContainer}>
+                            <Text style={styles.joinedRideText}><Ionicons name="checkmark-circle" size={20} color={"white"}/>Joined Ride</Text>
+                        </View> : null}
                         <View style={styles.rideNameContainer}>
                             <Text style={styles.rideName}> {props.name}</Text>
                         </View>
@@ -43,12 +56,12 @@ const RideView = (props) => {
             </View>
             <View style={styles.textContainer}>
                 <View style={styles.row}>
-                    <Text> From: {props.from}</Text>
-                    <Text> To: {props.to}</Text>
+                    <Text style={styles.labelLeft}>From {props.from}</Text>
+                    <Text style={styles.labelRight}>{props.distance}</Text>
                 </View>
                 <View style={styles.row}>
-                    <Text> Date: {dateString()}</Text>
-                    <Text> Speed: {props.speed}</Text>
+                    <Text style={styles.labelLeft}>{dateString()}</Text>
+                    <Text style={styles.labelRight}>{props.speed}</Text>
                 </View>
             </View>
         </View>
@@ -76,15 +89,16 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 20,
     },
     textContainer: {
-        marginBottom: 10,
         backgroundColor: "white",
-
+        height: 75,
+        marginBottom: 15,
     },
     row: {
-        marginVertical: 10,
-        marginHorizontal: 5,
+        marginTop: 10,
+        marginHorizontal: 10,
         flexDirection: "row",
         justifyContent: "space-between",
+        height: "50%",
     },
     map: {
         position: 'absolute',
@@ -112,6 +126,27 @@ const styles = StyleSheet.create({
         left: 5,
         color: "white",
         fontSize: 30,
+    },
+    labelLeft: {
+        flexShrink: 1,
+        width: "50%",
+        textAlign: "left",
+    },
+    labelRight: {
+        flexShrink: 1,
+        width: "50%",
+        textAlign: "right"
+    },
+    joinedRideContainer: {
+        position: "absolute",
+        top: 0,
+    },
+    joinedRideText: {
+        position: "absolute",
+        top: 10,
+        left: 10,
+        color: "white",
+        fontSize: 15,
     }
 });
 
