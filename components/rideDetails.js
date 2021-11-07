@@ -13,29 +13,52 @@ const RideDetails = ({navigation, route}) => {
     console.log(displayName, email, uid)
 */
     const [user, setUser] = useState({});
+    const [joined, setJoined] = useState(false);
+    const [att, setAtt] = useState([]);
 
     const dateString = () => {
-        let date = new Date(route.params.item.date)
+        let date = new Date(route.params.item.date);
         let day = date.getDate();
         let month = date.getMonth()+1;
         let year = date.getFullYear();
         let hours = date.getHours();
         let minutes = date.getMinutes();
         return(day + "/" + month + "/" + year + " " + hours + ":" + minutes);
-    }
+    };
 
-
+    /*Bliver nødt til at lave en query til databasen her i stedet, for ellers skal man gå ud og ind igen for at se ændringer i attendees*/
+    /*og så lave en ny state for attendees der opdateres når der trykkes join*/
     let attendees = Object.values(route.params.item.attendees);
-    /*Fjerner undefined værdi fra attendees*/
-    //attendees = attendees.filter(function(x) {
-     //   return x !== undefined;
-    //});
+
 
 
     useEffect(() => {
-        let currUser = firebase.auth().currentUser
-        setUser(currUser)
+        let currUser = firebase.auth().currentUser;
+        setUser(currUser);
+        //setAtt(attendees);
+        console.log(attendees);
+        if(attendees.filter(e => e.uid === user.uid).length===1){
+            setJoined(true);
+            console.log(joined);
+        }
+
     });
+
+    const Join = () =>{
+        if (joined === false){
+            return (
+                <TouchableOpacity style={styles.joinRideButton} onPress={handleJoinRide}>
+                    <Text style={styles.joinRideButtonText}>Join ride</Text>
+                </TouchableOpacity>
+            )
+        } else if (joined === true){
+            return (
+                <TouchableOpacity style={styles.joinedButton} onPress={handleJoinRide}>
+                    <Text style={styles.joinRideButtonText}>Ride joined!</Text>
+                </TouchableOpacity>
+            )
+        }
+    };
 
 
     const handleJoinRide = () => {
@@ -48,6 +71,7 @@ const RideDetails = ({navigation, route}) => {
                     .push({uid: user.uid, username: user.displayName});
             navigation.navigate("Explore")
             Alert.alert("Ride joined")
+           setJoined(true);
         }else {
             Alert.alert("You are already signed up for this ride")
         }
@@ -101,9 +125,7 @@ const RideDetails = ({navigation, route}) => {
                         : <Text>{route.params.item.description}</Text>}
                     </View>
             <View style={styles.joinRideButtonContainer}>
-            <TouchableOpacity style={styles.joinRideButton} onPress={handleJoinRide}>
-                <Text style={styles.joinRideButtonText}>Join ride</Text>
-            </TouchableOpacity>
+                <Join/>
             </View>
             </View>
         </ScrollView>
@@ -127,6 +149,21 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginTop: 33,
         shadowColor: "red",
+        shadowOpacity: 0.5,
+        shadowOffset: {
+            height: 2,
+        },
+        shadowRadius: 3.84,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    joinedButton: {
+        backgroundColor: 'green',
+        width: 200,
+        height: 50,
+        borderRadius: 20,
+        marginTop: 33,
+        shadowColor: "green",
         shadowOpacity: 0.5,
         shadowOffset: {
             height: 2,
