@@ -58,6 +58,7 @@ const RideDetails = ({navigation, route}) => {
 
 
 
+
     return (
         <ScrollView style={styles.ScrollContainer}>
             <MapView
@@ -85,12 +86,20 @@ const RideDetails = ({navigation, route}) => {
                         </TouchableOpacity>
                         <Text>{dateString()}</Text>
                     </View>
-            <Text>Dette er ride details for ride navn: {route.params.item.name} og id: {route.params.id}</Text>
-            <Text>Organiseret af: {route.params.item.organizer.username}</Text>
-
-            <Text>Curr user: {user.uid}</Text>
-            <Text>attendees: {attendees.length}</Text>
-
+                    <View style={styles.row}>
+                        <Text><Text style={{color:"red"}}>Start location:</Text> {route.params.item.startAddress}</Text>
+                    </View>
+                    <View style={styles.row}>
+                        <Text><Text style={{color:"red"}}>Distance:</Text> {route.params.item.distance}</Text>
+                    </View>
+                    <View style={styles.row}>
+                        <Text><Text style={{color:"red"}}>Average speed: </Text> {route.params.item.speed}</Text>
+                    </View>
+                    <View style={styles.row}>
+                        {route.params.item.description.length===0?
+                        <Text style={{fontStyle:"italic"}}> No description available.</Text>
+                        : <Text>{route.params.item.description}</Text>}
+                    </View>
             <View style={styles.joinRideButtonContainer}>
             <TouchableOpacity style={styles.joinRideButton} onPress={handleJoinRide}>
                 <Text style={styles.joinRideButtonText}>Join ride</Text>

@@ -15,6 +15,7 @@ import MapScreen from "./mapScreen";
 import {SafeAreaView} from "react-native";
 import RideDetails from "./rideDetails";
 import RideParticipants from "./rideParticipants";
+import LogoHeader from "./logoHeader";
 
 
 const AppNavigator = ({navigation}) => {
@@ -38,7 +39,7 @@ const AppNavigator = ({navigation}) => {
     function StackNavigationHome() {
         return(
             <Stack.Navigator>
-                <Stack.Screen name="HomePage" component={Home} />
+                <Stack.Screen name="HomePage" component={Home} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}, headerTitle: () => <LogoHeader/>}}/>
             </Stack.Navigator>
         )
     }
