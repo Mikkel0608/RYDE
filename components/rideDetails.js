@@ -14,7 +14,8 @@ const RideDetails = ({navigation, route}) => {
 */
     const [user, setUser] = useState({});
     const [joined, setJoined] = useState(false);
-    const [att, setAtt] = useState([]);
+    const [ride, setRide] = useState();
+
 
     const dateString = () => {
         let date = new Date(route.params.item.date);
@@ -35,14 +36,33 @@ const RideDetails = ({navigation, route}) => {
     useEffect(() => {
         let currUser = firebase.auth().currentUser;
         setUser(currUser);
-        //setAtt(attendees);
-        console.log(attendees);
-        if(attendees.filter(e => e.uid === user.uid).length===1){
-            setJoined(true);
-            console.log(joined);
+        console.log(route.params.id);
+        console.log(joined)
+        
+
+        
+        try {
+            firebase.database()
+                .ref()
+                .child(`Rides/${route.params.id}`)
+                .orderByKey()
+                .on('value', snapshot => {
+                    setRide(snapshot.val());
+                })
+        } catch (error) {
+            console.log(error.message)
         }
 
-    });
+        if(ride){
+            console.log(Object.values(ride.attendees).filter(e=> e.uid === user.uid))
+            if(Object.values(ride.attendees).filter(e=> e.uid === user.uid).length===1){
+
+            setJoined(true)
+            console.log(joined)
+            }
+        }
+
+    }, []);
 
     const Join = () =>{
         if (joined === false){
@@ -51,6 +71,7 @@ const RideDetails = ({navigation, route}) => {
                     <Text style={styles.joinRideButtonText}>Join ride</Text>
                 </TouchableOpacity>
             )
+
         } else if (joined === true){
             return (
                 <TouchableOpacity style={styles.joinedButton} onPress={handleJoinRide}>
