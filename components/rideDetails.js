@@ -14,7 +14,7 @@ const RideDetails = ({navigation, route}) => {
 */
     const [user, setUser] = useState({});
     const [joined, setJoined] = useState();
-    const [ride, setRide] = useState();
+    const [ride, setRide] = useState({});
 
 
     const dateString = () => {
@@ -36,9 +36,9 @@ const RideDetails = ({navigation, route}) => {
     useEffect(() => {
         let currUser = firebase.auth().currentUser;
         setUser(currUser);
-        
 
-        
+
+
         try {
             firebase.database()
                 .ref()
@@ -46,14 +46,15 @@ const RideDetails = ({navigation, route}) => {
                 .orderByKey()
                 .on('value', snapshot => {
                     setRide(snapshot.val());
+                    if (Object.values(snapshot.val().attendees).filter(e => e.uid === user.uid).length > 0) {
+                        //Her får jeg en fejl med at den re-render for mange gange
+                        setJoined(true)
+                    }
                 })
         } catch (error) {
             console.log(error.message)
         }
-
     }, []);
-
-
 
 
     const handleJoinRide = () => {
@@ -77,16 +78,12 @@ const RideDetails = ({navigation, route}) => {
         navigation.navigate("Ride Participants", {attendees: route.params.item.attendees})
     }
 
-    if(!ride) {
-        return(
-            <Text> Trip not found </Text>
-        )
-    } else{
-        if(Object.values(ride.attendees).filter(e=> e.uid === user.uid).length ===1){
-            //Her får jeg en fejl med at den re-render for mange gange
-            //setJoined(true)
+    const checkJoined = () => {
+        if(joined) {
+            return true;
         }
     }
+
 
     return (
         <ScrollView style={styles.ScrollContainer}>
@@ -131,11 +128,11 @@ const RideDetails = ({navigation, route}) => {
                     </View>
             <View style={styles.joinRideButtonContainer}>
 
-                {joined === true ?
+                {checkJoined ?
                     <TouchableOpacity style={styles.joinedButton} onPress={()=> Alert.alert("You have already joined this ride")}>
                         <Text style={styles.joinRideButtonText}>Ride joined!</Text>
                     </TouchableOpacity>
-                
+
                 :   <TouchableOpacity style={styles.joinRideButton} onPress={handleJoinRide}>
                         <Text style={styles.joinRideButtonText}>Join ride</Text>
                     </TouchableOpacity> }
