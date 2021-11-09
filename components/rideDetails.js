@@ -13,7 +13,7 @@ const RideDetails = ({navigation, route}) => {
     console.log(displayName, email, uid)
 */
     const [user, setUser] = useState({});
-    const [joined, setJoined] = useState(false);
+    const [joined, setJoined] = useState();
     const [ride, setRide] = useState();
 
 
@@ -36,8 +36,6 @@ const RideDetails = ({navigation, route}) => {
     useEffect(() => {
         let currUser = firebase.auth().currentUser;
         setUser(currUser);
-        console.log(route.params.id);
-        console.log(joined)
         
 
         
@@ -53,39 +51,15 @@ const RideDetails = ({navigation, route}) => {
             console.log(error.message)
         }
 
-        if(ride){
-            console.log(Object.values(ride.attendees).filter(e=> e.uid === user.uid))
-            if(Object.values(ride.attendees).filter(e=> e.uid === user.uid).length===1){
-
-            setJoined(true)
-            console.log(joined)
-            }
-        }
-
     }, []);
 
-    const Join = () =>{
-        if (joined === false){
-            return (
-                <TouchableOpacity style={styles.joinRideButton} onPress={handleJoinRide}>
-                    <Text style={styles.joinRideButtonText}>Join ride</Text>
-                </TouchableOpacity>
-            )
 
-        } else if (joined === true){
-            return (
-                <TouchableOpacity style={styles.joinedButton} onPress={handleJoinRide}>
-                    <Text style={styles.joinRideButtonText}>Ride joined!</Text>
-                </TouchableOpacity>
-            )
-        }
-    };
 
 
     const handleJoinRide = () => {
 
-        /*Tjekker om brugeren allerede er tilmeldt*/
-       if(attendees.filter(e => e.uid === user.uid).length===0){
+        /*Skal bruge ride state i stedet for*/
+       if(Object.values(ride.attendees).filter(e => e.uid === user.uid).length===0){
             firebase
                 .database()
                 .ref('Rides/'+route.params.id+'/attendees')
@@ -93,16 +67,26 @@ const RideDetails = ({navigation, route}) => {
             navigation.navigate("Explore")
             Alert.alert("Ride joined")
            setJoined(true);
-        }else {
-            Alert.alert("You are already signed up for this ride")
+        } else {
+                Alert.alert('Already joined')
+            setJoined(true);
         }
     }
+
     const showParticipants = () => {
         navigation.navigate("Ride Participants", {attendees: route.params.item.attendees})
     }
 
-
-
+    if(!ride) {
+        return(
+            <Text> Trip not found </Text>
+        )
+    } else{
+        if(Object.values(ride.attendees).filter(e=> e.uid === user.uid).length ===1){
+            //Her får jeg en fejl med at den re-render for mange gange
+            //setJoined(true)
+        }
+    }
 
     return (
         <ScrollView style={styles.ScrollContainer}>
@@ -146,7 +130,16 @@ const RideDetails = ({navigation, route}) => {
                         : <Text>{route.params.item.description}</Text>}
                     </View>
             <View style={styles.joinRideButtonContainer}>
-                <Join/>
+
+                {joined === true ?
+                    <TouchableOpacity style={styles.joinedButton} onPress={()=> Alert.alert("You have already joined this ride")}>
+                        <Text style={styles.joinRideButtonText}>Ride joined!</Text>
+                    </TouchableOpacity>
+                
+                :   <TouchableOpacity style={styles.joinRideButton} onPress={handleJoinRide}>
+                        <Text style={styles.joinRideButtonText}>Join ride</Text>
+                    </TouchableOpacity> }
+
             </View>
             </View>
         </ScrollView>
