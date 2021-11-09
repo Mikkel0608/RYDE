@@ -4,9 +4,13 @@ import firebase from "firebase";
 import RideView from "./rideView";
 import RideViewSmall from "./rideViewSmall";
 
-const Home = (props) => {
+const Home = ({navigation}) => {
     const [user, setUser] = useState({});
-    const [myRides, setMyRides] = useState([]);
+    const [myRideValues, setMyRideValues] = useState([]);
+    const [myRideKeys, setMyRideKeys] = useState([]);
+
+    let filteredRideKeys = [];
+    let filteredRideValues = [];
 
     useEffect( () => {
         setUser(firebase.auth().currentUser);
@@ -17,19 +21,22 @@ const Home = (props) => {
                 .orderByChild("date")
                 .startAt(new Date().getTime())
                 .on('value', snapshot => {
-                    const foundRides = Object.values(snapshot.val());
-                    let filteredRides = [];
-                   for (let i=0; i<foundRides.length; i++) {
-                           for (let x = 0; x < foundRides[i].attendees.length; x++) {
+                   for (let i=0; i<Object.keys(snapshot.val()).length; i++) {
+                       //console.log(Object.values(Object.values(snapshot.val())[i].attendees));
+                           for (let x = 0; x < Object.keys(snapshot.val())[i].length; x++) {
                                try {
-                               if (foundRides[i].attendees[x].uid === user.uid) {
-                                   filteredRides.push(foundRides[i])
-                                   setMyRides(filteredRides);
+                                   //console.log(Object.values(snapshot.val())[i].attendees.length);
+                               if (Object.values(Object.values(snapshot.val())[i].attendees)[x].uid === user.uid) {
+                                   //console.log((Object.values(Object.values(snapshot.val())[i].attendees)[x]))
+                                   filteredRideValues.push(Object.values(snapshot.val())[i]);
+                                   filteredRideKeys.push(Object.keys(snapshot.val())[i]);
                                }
                            } catch(error) {
                        }
                        }
                    }
+                    setMyRideValues(filteredRideValues);
+                    setMyRideKeys(filteredRideKeys);
                 })
         } catch (error) {
             console.log(error.message)
@@ -38,7 +45,9 @@ const Home = (props) => {
         //Med tomt array loader den ikke turene nok. Uden deps ender den i infinite loop.
     },[user]);
 
-
+    const handleRideDetails = (id) => {
+        navigation.navigate("Ride Details", {id})
+    }
 
     return (
         <ScrollView style={styles.container}>
@@ -48,10 +57,10 @@ const Home = (props) => {
 
             <Text style={styles.label}>Your upcoming rides</Text>
             <View style={styles.horizontalScroller}>
-                <FlatList horizontal={true} keyExtractor={(item, index) => index.toString()} data={myRides} renderItem={({item, index}) => {
+                <FlatList horizontal={true} keyExtractor={(item, index) => myRideKeys[index]} data={myRideValues} renderItem={({item, index}) => {
                     return (
                         <View>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => handleRideDetails(myRideKeys[index])}>
                                 <RideViewSmall name={item.name} from={item.startAddress} distance={item.distance} date={item.date} speed={item.speed} latitude={item.startLatitude} longitude={item.startLongitude} attendees={item.attendees}/>
                             </TouchableOpacity>
                         </View>
