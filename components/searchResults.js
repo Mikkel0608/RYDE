@@ -32,7 +32,7 @@ const searchResult = ({navigation, route}) => {
     }
 
     const handleSelectResult = (id, item) => {
-        navigation.navigate("Ride Details", {id, item})
+        navigation.navigate("Ride Details", {id})
     }
 
     const resultArray = Object.values(searchResults);

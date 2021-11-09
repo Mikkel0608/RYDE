@@ -6,19 +6,24 @@ import Constants from "expo-constants";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const RideDetails = ({navigation, route}) => {
-    /*
-    let currentUser = firebase.auth().currentUser
-    let {displayName, email} = currentUser.providerData[0];
-    let {uid} = currentUser;
-    console.log(displayName, email, uid)
-*/
+    const initialState = { name: '',
+        date: new Date(),
+        distance: '',
+        speed: '',
+        description: '',
+        organizer: '',
+        attendees: [],
+        startLatitude: 0,
+        startLongitude: 0,
+        startAddress: "",
+    };
     const [user, setUser] = useState({});
-    const [joined, setJoined] = useState();
-    const [ride, setRide] = useState({});
+    const [ride, setRide] = useState(initialState);
+    const [attendees, setAttendees] = useState([])
 
 
     const dateString = () => {
-        let date = new Date(route.params.item.date);
+        let date = new Date(ride.date);
         let day = date.getDate();
         let month = date.getMonth()+1;
         let year = date.getFullYear();
@@ -27,17 +32,11 @@ const RideDetails = ({navigation, route}) => {
         return(day + "/" + month + "/" + year + " " + hours + ":" + minutes);
     };
 
-    /*Bliver nødt til at lave en query til databasen her i stedet, for ellers skal man gå ud og ind igen for at se ændringer i attendees*/
-    /*og så lave en ny state for attendees der opdateres når der trykkes join*/
-    let attendees = Object.values(route.params.item.attendees);
-
 
 
     useEffect(() => {
         let currUser = firebase.auth().currentUser;
         setUser(currUser);
-
-
 
         try {
             firebase.database()
@@ -46,10 +45,7 @@ const RideDetails = ({navigation, route}) => {
                 .orderByKey()
                 .on('value', snapshot => {
                     setRide(snapshot.val());
-                    if (Object.values(snapshot.val().attendees).filter(e => e.uid === user.uid).length > 0) {
-                        //Her får jeg en fejl med at den re-render for mange gange
-                        setJoined(true)
-                    }
+                    setAttendees(Object.values(snapshot.val().attendees))
                 })
         } catch (error) {
             console.log(error.message)
@@ -58,32 +54,57 @@ const RideDetails = ({navigation, route}) => {
 
 
     const handleJoinRide = () => {
-
         /*Skal bruge ride state i stedet for*/
-       if(Object.values(ride.attendees).filter(e => e.uid === user.uid).length===0){
+       if(attendees.filter(e => e.uid === user.uid).length===0){
             firebase
                 .database()
                 .ref('Rides/'+route.params.id+'/attendees')
                     .push({uid: user.uid, username: user.displayName});
-            navigation.navigate("Explore")
+           try {
+               firebase.database()
+                   .ref()
+                   .child(`Rides/${route.params.id}`)
+                   .orderByKey()
+                   .on('value', snapshot => {
+                       setRide(snapshot.val());
+                       setAttendees(Object.values(snapshot.val().attendees))
+                   })
+           } catch (error) {
+               console.log(error.message)
+           }
             Alert.alert("Ride joined")
-           setJoined(true);
         } else {
                 Alert.alert('Already joined')
-            setJoined(true);
         }
     }
 
     const showParticipants = () => {
-        navigation.navigate("Ride Participants", {attendees: route.params.item.attendees})
+        navigation.navigate("Ride Participants", {attendees: ride.attendees})
     }
 
-    const checkJoined = () => {
-        if(joined) {
-            return true;
+
+    if(!ride) {
+        return(
+            <Text> Fetching ride details...</Text>
+        )
+    }
+
+    const JoinButton = () => {
+        if(Object.values(attendees).filter(e => e.uid === user.uid).length > 0) {
+            return (
+                <View style={styles.joinedButton}
+                                  onPress={() => Alert.alert("You have already joined this ride")}>
+                    <Text style={styles.joinRideButtonText}>Ride joined</Text>
+                </View>
+            )
+        } else {
+            return (
+               <TouchableOpacity style={styles.joinRideButton} onPress={handleJoinRide}>
+                <Text style={styles.joinRideButtonText}>Join ride</Text>
+            </TouchableOpacity>
+            )
         }
     }
-
 
     return (
         <ScrollView style={styles.ScrollContainer}>
@@ -91,52 +112,43 @@ const RideDetails = ({navigation, route}) => {
                 provider="google"
                 style={styles.map}
                 initialRegion={{
-                    latitude: route.params.item.startLatitude,
-                    longitude: route.params.item.startLongitude,
+                    latitude: ride.startLatitude,
+                    longitude: ride.startLongitude,
                     latitudeDelta: 0.05,
                     longitudeDelta: 0.05,
                 }}
 
             >
                 <Marker
-                    coordinate={{latitude: route.params.item.startLatitude, longitude: route.params.item.startLongitude}}>
+                    coordinate={{latitude: ride.startLatitude, longitude: ride.startLongitude}}>
                 </Marker>
             </MapView>
                 <View style={styles.textContainer}>
-                        <Text style={styles.pageHeader}> {route.params.item.name}</Text>
+                        <Text style={styles.pageHeader}> {ride.name}</Text>
                     <View style={styles.row}>
                         <TouchableOpacity style={styles.participantContainer} onPress={showParticipants}>
                             <Ionicons name="people-circle" size={30}/>
-                            <Text> {Object.values(route.params.item.attendees).length} participant(s)</Text>
+                            <Text> {attendees.length} participant(s)</Text>
                             <Ionicons name="chevron-forward-outline" size={15}/>
                         </TouchableOpacity>
                         <Text>{dateString()}</Text>
                     </View>
                     <View style={styles.row}>
-                        <Text><Text style={{color:"red"}}>Start location:</Text> {route.params.item.startAddress}</Text>
+                        <Text><Text style={{color:"red"}}>Start location:</Text> {ride.startAddress}</Text>
                     </View>
                     <View style={styles.row}>
-                        <Text><Text style={{color:"red"}}>Distance:</Text> {route.params.item.distance}</Text>
+                        <Text><Text style={{color:"red"}}>Distance:</Text> {ride.distance}</Text>
                     </View>
                     <View style={styles.row}>
-                        <Text><Text style={{color:"red"}}>Average speed: </Text> {route.params.item.speed}</Text>
+                        <Text><Text style={{color:"red"}}>Average speed: </Text> {ride.speed}</Text>
                     </View>
                     <View style={styles.row}>
-                        {route.params.item.description.length===0?
+                        {ride.description.length===0?
                         <Text style={{fontStyle:"italic"}}> No description available.</Text>
-                        : <Text>{route.params.item.description}</Text>}
+                        : <Text>{ride.description}</Text>}
                     </View>
             <View style={styles.joinRideButtonContainer}>
-
-                {checkJoined ?
-                    <TouchableOpacity style={styles.joinedButton} onPress={()=> Alert.alert("You have already joined this ride")}>
-                        <Text style={styles.joinRideButtonText}>Ride joined!</Text>
-                    </TouchableOpacity>
-
-                :   <TouchableOpacity style={styles.joinRideButton} onPress={handleJoinRide}>
-                        <Text style={styles.joinRideButtonText}>Join ride</Text>
-                    </TouchableOpacity> }
-
+                <JoinButton/>
             </View>
             </View>
         </ScrollView>
@@ -169,12 +181,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     joinedButton: {
-        backgroundColor: 'green',
+        backgroundColor: 'grey',
         width: 200,
         height: 50,
         borderRadius: 20,
         marginTop: 33,
-        shadowColor: "green",
+        shadowColor: "grey",
         shadowOpacity: 0.5,
         shadowOffset: {
             height: 2,

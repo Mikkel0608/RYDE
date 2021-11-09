@@ -75,11 +75,6 @@ const NewRide = ({navigation, route}) => {
 
 
     const handleCreate = async () => {
-        //Setting the organizer to be the uid of the current logged in user
-        //await setNewRide({...newRide, organizer: firebase.auth().currentUser.uid});
-        //Pushing the users uid into attendees array
-        //setNewRide({...newRide, attendees: [newRide.attendees, firebase.auth().currentUser.uid]})
-        //console.log(newRide.attendees);
         newRide.date = newRide.date.getTime();
         const {name, date, distance, speed, description, organizer, attendees, startLatitude, startLongitude, startAddress} = newRide;
         if(name.length === 0 || distance.length === 0 || speed.length === 0 || startAddress === "") {
@@ -89,10 +84,13 @@ const NewRide = ({navigation, route}) => {
                 firebase
                     .database()
                     .ref('/Rides/')
-                    .push({ name, date, distance, speed, description, organizer, attendees, startLatitude, startLongitude, startAddress});
-                Alert.alert(`Saved`);
-                setNewRide(initialState);
-                navigation.popToTop();
+                    .push({ name, date, distance, speed, description, organizer, attendees, startLatitude, startLongitude, startAddress})
+                    .then((snapshot) => {
+                        setNewRide(initialState);
+                        navigation.popToTop();
+                        const id = snapshot.key;
+                        navigation.navigate('Ride Details', {id})
+                    });
             } catch (error) {
                 console.log(`Error: ${error.message}`)
             }
