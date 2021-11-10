@@ -84,8 +84,8 @@ const RideDetails = ({navigation, route}) => {
     function handleCancel (){
         let keys = Object.keys(ride.attendees);
         let values = Object.values(ride.attendees);
-        console.log(values);
-        console.log(keys);
+        //console.log(values);
+        //console.log(keys);
 
         let firebase_skod_id;
         let i;
@@ -93,6 +93,18 @@ const RideDetails = ({navigation, route}) => {
             if (values[i].uid === user.uid){
                 firebase_skod_id = keys[i];
             }
+        }
+        let path = `Rides/${route.params.id}/attendees/${firebase_skod_id}`;
+        console.log(path)
+        try {
+            firebase
+                .database()
+                .ref(path)
+                .remove().then(data => console.log(data))
+                Alert.alert('You are no longer signed up for this ride')
+                navigation.navigate("HomePage")
+        } catch(e){
+            Alert.alert(error.message)
         }
         /*
         try {
@@ -119,6 +131,7 @@ const RideDetails = ({navigation, route}) => {
     const showParticipants = () => {
         navigation.navigate("Ride Participants", {attendees: ride.attendees})
     }
+
 
 
     if(!ride) {
