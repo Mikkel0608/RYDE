@@ -21,22 +21,22 @@ const Home = ({navigation}) => {
                 .orderByChild("date")
                 .startAt(new Date().getTime())
                 .on('value', snapshot => {
-                   for (let i=0; i<Object.keys(snapshot.val()).length; i++) {
-                       //console.log(Object.values(Object.values(snapshot.val())[i].attendees));
-                           for (let x = 0; x < Object.keys(snapshot.val())[i].length; x++) {
-                               try {
-                                   //console.log(Object.values(snapshot.val())[i].attendees.length);
-                               if (Object.values(Object.values(snapshot.val())[i].attendees)[x].uid === user.uid) {
-                                   //console.log((Object.values(Object.values(snapshot.val())[i].attendees)[x]))
-                                   filteredRideValues.push(Object.values(snapshot.val())[i]);
-                                   filteredRideKeys.push(Object.keys(snapshot.val())[i]);
-                               }
-                           } catch(error) {
+
+                    let rideKeys = Object.keys(snapshot.val());
+                    let rideValues = Object.values(snapshot.val());
+
+                   for (let i=0; i<rideKeys.length; i++) {
+                       let rideAttendeesValues = Object.values(rideValues[i].attendees);
+                       if(rideAttendeesValues.filter(e => e.uid === user.uid).length>0) {
+                           filteredRideValues.push(Object.values(snapshot.val())[i]);
+                           filteredRideKeys.push(Object.keys(snapshot.val())[i]);
                        }
-                       }
+
                    }
                     setMyRideValues(filteredRideValues);
                     setMyRideKeys(filteredRideKeys);
+                    filteredRideKeys = [];
+                    filteredRideValues = [];
                 })
         } catch (error) {
             console.log(error.message)
