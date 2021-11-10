@@ -29,6 +29,7 @@ const LoginPage = ({navigation}) => {
                            placeholder={"Type in email"}
                            onChangeText={(email) => setEmail(email)}
                            keyboardType={"email-address"}
+                           autoCapitalize={"none"}
                 />
                 <Text style={styles.loginText}> Password</Text>
                 <TextInput style={styles.input}
@@ -80,12 +81,12 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
     },
     loginButton: {
-        backgroundColor: 'red',
+        backgroundColor: '#ff3823',
         width: 200,
         height: 50,
         borderRadius: 20,
         marginTop: 33,
-        shadowColor: "red",
+        shadowColor: "#ff3823",
         shadowOpacity: 0.5,
         shadowOffset: {
             height: 2,
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
     },
     signupText: {
         marginTop: 30,
-        color: "red",
+        color: "#ff3823",
         fontSize: 20,
     }
     }
