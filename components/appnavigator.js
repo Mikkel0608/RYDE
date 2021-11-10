@@ -41,6 +41,7 @@ const AppNavigator = ({navigation}) => {
             <Stack.Navigator>
                 <Stack.Screen name="HomePage" component={Home} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}, headerTitle: () => <LogoHeader/>}}/>
                 <Stack.Screen name="Ride Details" component={RideDetails} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}, headerTransparent: true, headerTitle:"", headerBackTitle:"Back"}}/>
+                <Stack.Screen name="Ride Participants" component={RideParticipants} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
             </Stack.Navigator>
         )
     }
