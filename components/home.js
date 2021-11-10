@@ -21,18 +21,18 @@ const Home = ({navigation}) => {
                 .orderByChild("date")
                 .startAt(new Date().getTime())
                 .on('value', snapshot => {
-
                     let rideKeys = Object.keys(snapshot.val());
                     let rideValues = Object.values(snapshot.val());
-
-                   for (let i=0; i<rideKeys.length; i++) {
-                       let rideAttendeesValues = Object.values(rideValues[i].attendees);
-                       if(rideAttendeesValues.filter(e => e.uid === user.uid).length>0) {
-                           filteredRideValues.push(Object.values(snapshot.val())[i]);
-                           filteredRideKeys.push(Object.keys(snapshot.val())[i]);
-                       }
-
-                   }
+                        for (let i = 0; i < rideKeys.length; i++) {
+                            try {
+                                let rideAttendeesValues = Object.values(rideValues[i].attendees);
+                                if (rideAttendeesValues.filter(e => e.uid === user.uid).length > 0) {
+                                    filteredRideValues.push(Object.values(snapshot.val())[i]);
+                                    filteredRideKeys.push(Object.keys(snapshot.val())[i]);
+                                }
+                            } catch (error) {
+                            }
+                        }
                     setMyRideValues(filteredRideValues);
                     setMyRideKeys(filteredRideKeys);
                     filteredRideKeys = [];

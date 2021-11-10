@@ -72,9 +72,7 @@ const RideDetails = ({navigation, route}) => {
            } catch (error) {
                console.log(error.message)
            }
-            Alert.alert("Ride joined")
         } else {
-                Alert.alert('Already joined')
         }
     }
 
