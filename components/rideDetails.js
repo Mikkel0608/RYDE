@@ -72,7 +72,6 @@ const RideDetails = ({navigation, route}) => {
            } catch (error) {
                console.log(error.message)
            }
-        } else {
         }
     }
 
@@ -90,8 +89,7 @@ const RideDetails = ({navigation, route}) => {
     const JoinButton = () => {
         if(Object.values(attendees).filter(e => e.uid === user.uid).length > 0) {
             return (
-                <View style={styles.joinedButton}
-                                  onPress={() => Alert.alert("You have already joined this ride")}>
+                <View style={styles.joinedButton}>
                     <Text style={styles.joinRideButtonText}>Ride joined</Text>
                 </View>
             )
