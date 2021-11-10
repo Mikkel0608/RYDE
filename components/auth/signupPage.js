@@ -9,11 +9,35 @@ const SignUpPage = ({navigation}) => {
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
 
+    
+    function writeUserData(user) {
+        const {name, phone, photoUrl, uid, email} = user;
+        firebase.database()
+            .ref('/users/' + user.uid)
+            .push({name, phone, photoUrl, uid, email})
+            .then(data =>{
+            console.log(data)
+        })
+        .catch(error => {
+            console.log(error.message)
+        });
+    }
+
     const handleSignup = async() => {
         try {
             //Sending email and password to firebase for signup
             await firebase.auth().createUserWithEmailAndPassword(email, password).then((user)=>{
                 user.user.updateProfile({displayName:username}).then(() => {
+                    let u = user.user.providerData[0];
+                    var userData = {
+                        name: u.displayName,
+                        phone: ''/*u.phone*/,
+                        photoUrl: ''/*u.photoUrl*/,
+                        uid: user.user.uid,
+                        email: u.email
+                    }
+                    writeUserData(userData)
+
                     //Brugerens username er blevet tilkoblet
                 }).catch((error) => {
                     Alert.alert("An error has occured: " + error.message)
