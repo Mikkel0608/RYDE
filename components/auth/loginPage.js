@@ -29,6 +29,7 @@ const LoginPage = ({navigation}) => {
                            placeholder={"Type in email"}
                            onChangeText={(email) => setEmail(email)}
                            keyboardType={"email-address"}
+                           autoCapitalize={"none"}
                 />
                 <Text style={styles.loginText}> Password</Text>
                 <TextInput style={styles.input}
