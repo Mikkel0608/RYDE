@@ -16,6 +16,7 @@ import {SafeAreaView} from "react-native";
 import RideDetails from "./rideDetails";
 import RideParticipants from "./rideParticipants";
 import LogoHeader from "./logoHeader";
+import otherProfile from './otherProfile';
 
 
 const AppNavigator = ({navigation}) => {
@@ -33,6 +34,8 @@ const AppNavigator = ({navigation}) => {
                 <Stack.Screen name="Search Results" component={searchResult} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
                 <Stack.Screen name="Ride Details" component={RideDetails} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}, headerTransparent: true, headerTitle:"", headerBackTitle:"Back"}}/>
                 <Stack.Screen name="Ride Participants" component={RideParticipants} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
+                <Stack.Screen name="Ryde Profile" component={otherProfile} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
+
             </Stack.Navigator>
         )
     }
@@ -42,6 +45,7 @@ const AppNavigator = ({navigation}) => {
                 <Stack.Screen name="HomePage" component={Home} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}, headerTitle: () => <LogoHeader/>}}/>
                 <Stack.Screen name="Ride Details" component={RideDetails} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}, headerTransparent: true, headerTitle:"", headerBackTitle:"Back"}}/>
                 <Stack.Screen name="Ride Participants" component={RideParticipants} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
+                <Stack.Screen name="Other Profile" component={otherProfile} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
             </Stack.Navigator>
         )
     }

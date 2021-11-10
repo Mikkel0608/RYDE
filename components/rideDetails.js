@@ -84,18 +84,16 @@ const RideDetails = ({navigation, route}) => {
     function handleCancel (){
         let keys = Object.keys(ride.attendees);
         let values = Object.values(ride.attendees);
-        //console.log(values);
-        //console.log(keys);
 
-        let firebase_skod_id;
+        let ride_key;
         let i;
         for(i=0; i<values.length; i++){
             if (values[i].uid === user.uid){
-                firebase_skod_id = keys[i];
-            }
+                ride_key = keys[i];
+                break;}
         }
-        let path = `Rides/${route.params.id}/attendees/${firebase_skod_id}`;
-        console.log(path)
+
+        let path = `Rides/${route.params.id}/attendees/${ride_key}`;
         try {
             firebase
                 .database()
@@ -106,30 +104,15 @@ const RideDetails = ({navigation, route}) => {
         } catch(e){
             Alert.alert(error.message)
         }
-        /*
-        try {
-            firebase
-                .database()
-                .ref(`/Cars/${id}`)
-                .remove().then(data =>console.log(data))
-
-        }catch (error) {
-            Alert.alert(error.message)
-        }
-        */
-/*
-        try{
-            firebase
-                .database()
-                .ref(`Rides/${route.params.id}/`)
-        }
-
-*/
-
     }
 
     const showParticipants = () => {
         navigation.navigate("Ride Participants", {attendees: ride.attendees})
+    }
+
+
+    function showOrganizer (){
+        navigation.navigate("Other Profile", {organizer: ride.organizer})
     }
 
 
@@ -158,7 +141,6 @@ const RideDetails = ({navigation, route}) => {
     }
 
     const CancelButton = () => {
-        console.log(attendees.filter(e => e.uid === user.uid).length)
         if(attendees.filter(e => e.uid === user.uid).length === 1){
             return (
                 <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
@@ -190,12 +172,19 @@ const RideDetails = ({navigation, route}) => {
                 <View style={styles.textContainer}>
                         <Text style={styles.pageHeader}> {ride.name}</Text>
                     <View style={styles.row}>
+                        <TouchableOpacity style={styles.participantContainer} onPress={showOrganizer}>
+                            <Ionicons name="people-circle" size={30}/>
+                            <Text> Organizer: {ride.organizer.username}</Text>
+                            <Ionicons name="chevron-forward-outline" size={15}/>
+                        </TouchableOpacity>
+                        <Text>{dateString()}</Text>
+                    </View>
+                    <View style={styles.row}>
                         <TouchableOpacity style={styles.participantContainer} onPress={showParticipants}>
                             <Ionicons name="people-circle" size={30}/>
                             <Text> {attendees.length} participant(s)</Text>
                             <Ionicons name="chevron-forward-outline" size={15}/>
                         </TouchableOpacity>
-                        <Text>{dateString()}</Text>
                     </View>
                     <View style={styles.row}>
                         <Text><Text style={{color:"red"}}>Start location:</Text> {ride.startAddress}</Text>
