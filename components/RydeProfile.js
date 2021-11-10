@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 
-const otherProfile = ({navigation, route}) => {
-    let organizer = route.params.organizer;
+const RydeProfile = ({navigation, route}) => {
 
+    const [profile, setProfile] = useState({});
+
+    useEffect(() => {
+        
+
+    }, []);
 
     return (
         <View>
             <Text>RYDE PROFILE</Text>
-            <Text>Name: {organizer.username}</Text>
+            <Text>Name: {route.params.profile.username}</Text>
 
         </View>
     )
@@ -32,4 +37,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default otherProfile;
+export default RydeProfile;

@@ -107,12 +107,12 @@ const RideDetails = ({navigation, route}) => {
     }
 
     const showParticipants = () => {
-        navigation.navigate("Ride Participants", {attendees: ride.attendees})
+        navigation.navigate("Ride Participants", {attendees: ride.attendees, organizer: ride.organizer})
     }
 
 
     function showOrganizer (){
-        navigation.navigate("Other Profile", {organizer: ride.organizer})
+        navigation.navigate("Ryde Profile", {profile: ride.organizer})
     }
 
 
