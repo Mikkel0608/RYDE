@@ -4,6 +4,7 @@ import firebase from "firebase";
 import RideView from "./rideView";
 import RideViewSmall from "./rideViewSmall";
 
+
 const Home = ({navigation}) => {
     const [user, setUser] = useState({});
     const [myRideValues, setMyRideValues] = useState([]);
@@ -22,14 +23,20 @@ const Home = ({navigation}) => {
                 .startAt(new Date().getTime())
                 .on('value', snapshot => {
 
+                    
+                    /*pga firebase struktur bliver vi nødt til at dele det op sådanne: id'er og værdier*/
                     let rideKeys = Object.keys(snapshot.val());
                     let rideValues = Object.values(snapshot.val());
 
-                   for (let i=0; i<rideKeys.length; i++) {
+                    /*Der loopes gennem de forskellige rides for at tjekke om brugeren har joinet dem*/
+                   for (let i=0; i<rideValues.length; i++) {
                        let rideAttendeesValues = Object.values(rideValues[i].attendees);
+
+                       /*Hvis brugeren har joinet, lægges id'et også ind i objektet*/
                        if(rideAttendeesValues.filter(e => e.uid === user.uid).length>0) {
-                           filteredRideValues.push(Object.values(snapshot.val())[i]);
-                           filteredRideKeys.push(Object.keys(snapshot.val())[i]);
+
+                           filteredRideKeys.push(rideKeys[i]);
+                            filteredRideValues.push(rideValues[i])
                        }
 
                    }
