@@ -32,6 +32,10 @@ const RideDetails = ({navigation, route}) => {
         return(day + "/" + month + "/" + year + " " + hours + ":" + minutes);
     };
 
+    let joined = false;
+        if(attendees.filter(e => e.uid === user.uid).length===1){
+            joined = true;
+        }
 
 
     useEffect(() => {
@@ -55,7 +59,8 @@ const RideDetails = ({navigation, route}) => {
 
     const handleJoinRide = () => {
         /*Skal bruge ride state i stedet for*/
-       if(attendees.filter(e => e.uid === user.uid).length===0){
+        //if(joined === true){
+        if(attendees.filter(e => e.uid === user.uid).length===0){
             firebase
                 .database()
                 .ref('Rides/'+route.params.id+'/attendees')
@@ -75,6 +80,42 @@ const RideDetails = ({navigation, route}) => {
         }
     }
 
+    /*Mangler lige at lave den her funktion*/
+    function handleCancel (){
+        let keys = Object.keys(ride.attendees);
+        let values = Object.values(ride.attendees);
+        console.log(values);
+        console.log(keys);
+
+        let firebase_skod_id;
+        let i;
+        for(i=0; i<values.length; i++){
+            if (values[i].uid === user.uid){
+                firebase_skod_id = keys[i];
+            }
+        }
+        /*
+        try {
+            firebase
+                .database()
+                .ref(`/Cars/${id}`)
+                .remove().then(data =>console.log(data))
+
+        }catch (error) {
+            Alert.alert(error.message)
+        }
+        */
+/*
+        try{
+            firebase
+                .database()
+                .ref(`Rides/${route.params.id}/`)
+        }
+
+*/
+
+    }
+
     const showParticipants = () => {
         navigation.navigate("Ride Participants", {attendees: ride.attendees})
     }
@@ -87,7 +128,8 @@ const RideDetails = ({navigation, route}) => {
     }
 
     const JoinButton = () => {
-        if(Object.values(attendees).filter(e => e.uid === user.uid).length > 0) {
+        //if(joined === true){
+        if(attendees.filter(e => e.uid === user.uid).length > 0) {
             return (
                 <View style={styles.joinedButton}>
                     <Text style={styles.joinRideButtonText}>Ride joined</Text>
@@ -99,6 +141,19 @@ const RideDetails = ({navigation, route}) => {
                 <Text style={styles.joinRideButtonText}>Join ride</Text>
             </TouchableOpacity>
             )
+        }
+    }
+
+    const CancelButton = () => {
+        console.log(attendees.filter(e => e.uid === user.uid).length)
+        if(attendees.filter(e => e.uid === user.uid).length === 1){
+            return (
+                <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+                    <Text style={styles.cancelRideButtonText}>Unjoin</Text>
+                </TouchableOpacity>
+            )
+        } else {
+            return null;
         }
     }
 
@@ -145,6 +200,7 @@ const RideDetails = ({navigation, route}) => {
                     </View>
             <View style={styles.joinRideButtonContainer}>
                 <JoinButton/>
+                <CancelButton/>
             </View>
             </View>
         </ScrollView>
@@ -190,6 +246,18 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         justifyContent: "center",
         alignItems: "center",
+    },
+    cancelButton: {
+        width: 100,
+        height: 30,
+        borderRadius: 20,
+        marginTop: 33,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    cancelRideButtonText: {
+        color:"red",
+        fontSize: 25,
     },
     joinRideButtonText: {
         color:"white",
