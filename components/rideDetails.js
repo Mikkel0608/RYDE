@@ -90,7 +90,8 @@ const RideDetails = ({navigation, route}) => {
         for(i=0; i<values.length; i++){
             if (values[i].uid === user.uid){
                 ride_key = keys[i];
-                break;}
+                break;
+            }
         }
 
         let path = `Rides/${route.params.id}/attendees/${ride_key}`;

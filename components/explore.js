@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View, TextInput, Button, TouchableOpacity, ScrollView} from "react-native";
+import {StyleSheet, Text, View, TextInput, Button, TouchableOpacity, ScrollView, Alert} from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import ModalDropdown from "react-native-modal-dropdown";
 import firebase from "firebase";
@@ -15,12 +15,17 @@ const Search = ({navigation}) => {
     }
 
     const onChangeDate = (event, selectedDate) => {
+        
         const currentDate = selectedDate || search.date;
         setSearch({...search, date: currentDate
         })};
 
     const handleSearch = () => {
-        navigation.navigate("Search Results", {search})
+        if(search.date < new date() ){
+            Alert.alert('Please select a valid date')
+        } else {
+            navigation.navigate("Search Results", {search})
+        }
     }
 
 
