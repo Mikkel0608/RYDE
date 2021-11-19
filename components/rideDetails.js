@@ -34,16 +34,6 @@ const RideDetails = ({navigation, route}) => {
         return(day + "/" + month + "/" + year + " " + hours + ":" + minutes);
     };
 
-    let joined = false;
-        if(attendees.filter(e => e.uid === user.uid).length===1){
-            joined = true;
-        }
-
-        if(!ride) {
-            return(
-                <Text> Fetching ride details...</Text>
-            )
-        }
 
     useEffect(() => {
         let currUser = firebase.auth().currentUser;
@@ -63,6 +53,11 @@ const RideDetails = ({navigation, route}) => {
         }
     }, []);
 
+        if(!ride) {
+            return(
+                <Text> Fetching ride details...</Text>
+            )
+        }
 
 
 
