@@ -16,7 +16,8 @@ const NewRide = ({navigation, route}) => {
         attendees: [],
         startLatitude:"",
         startLongitude:"",
-        startAddress: "",
+        startAddress: ""
+        //,comments: []
     };
     const [newRide, setNewRide] = useState(initialState);
 

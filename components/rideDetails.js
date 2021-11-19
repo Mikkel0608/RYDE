@@ -1,5 +1,5 @@
 import React, {useEffect, useState,} from 'react';
-import {Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {Alert, KeyboardAvoidingView, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Button, TextInput} from "react-native";
 import firebase from "firebase";
 import MapView, {Marker} from "react-native-maps";
 import Constants from "expo-constants";
@@ -17,13 +17,15 @@ const RideDetails = ({navigation, route}) => {
         startLongitude: 0,
         startAddress: "",
     };
+    const [newComment, setNewComment] = useState('');
     const [user, setUser] = useState({});
     const [ride, setRide] = useState(initialState);
     const [attendees, setAttendees] = useState([])
 
 
-    const dateString = () => {
-        let date = new Date(ride.date);
+
+    const dateString = (d) => {
+        let date = new Date(d);
         let day = date.getDate();
         let month = date.getMonth()+1;
         let year = date.getFullYear();
@@ -37,6 +39,11 @@ const RideDetails = ({navigation, route}) => {
             joined = true;
         }
 
+        if(!ride) {
+            return(
+                <Text> Fetching ride details...</Text>
+            )
+        }
 
     useEffect(() => {
         let currUser = firebase.auth().currentUser;
@@ -55,6 +62,8 @@ const RideDetails = ({navigation, route}) => {
             console.log(error.message)
         }
     }, []);
+
+
 
 
     const handleJoinRide = () => {
@@ -80,7 +89,6 @@ const RideDetails = ({navigation, route}) => {
         }
     }
 
-    /*Mangler lige at lave den her funktion*/
     function handleCancel (){
         let keys = Object.keys(ride.attendees);
         let values = Object.values(ride.attendees);
@@ -111,18 +119,90 @@ const RideDetails = ({navigation, route}) => {
         navigation.navigate("Ride Participants", {attendees: ride.attendees, organizer: ride.organizer})
     }
 
-
     function showOrganizer (){
         navigation.navigate("Ryde Profile", {profile: ride.organizer})
     }
 
+    function addComment (){
+        if(newComment.length>0){
 
+            var comment = {
+                uid: user.uid,
+                displayName: user.displayName,
+                date: new Date().getTime(),
+                comment: newComment
+            }
 
-    if(!ride) {
-        return(
-            <Text> Fetching ride details...</Text>
-        )
+            firebase
+            .database()
+            .ref(`Rides/${route.params.id}/comments`)
+            .push(comment);
+        }
     }
+
+    
+
+    const deleteComment = (com_key) => {
+        Alert.alert(
+            'Warning',
+            'Delete the comment?',
+             // <- this part is optional, you can pass an empty string
+            [
+              {text: 'OK', onPress: () => {
+                let path = `Rides/${route.params.id}/comments/${com_key}`;
+                try {
+                    firebase
+                        .database()
+                        .ref(path)
+                        .remove().then()
+                } catch(e){
+                    Alert.alert(error.message)
+                }
+              }},
+              {text: 'No'}
+            ],
+          );
+      };
+    
+
+    
+
+    
+
+    const Comments = () =>{
+        let commentArray;
+        let commentKeys;
+
+        if(ride.comments){
+            commentArray = Object.values(ride.comments)
+            commentKeys = Object.keys(ride.comments)
+
+    }
+        return (
+            <FlatList style={styles.container} data={commentArray} keyExtractor={(item, index) => commentKeys[index]} renderItem={({item, index}) => {
+                return (
+                    <View style={styles.row2}>
+                        <Text style={styles.dateText}>Date: {dateString(item.date)}</Text>
+                        <TouchableOpacity style={styles.rowText} onPress={()=> navigation.navigate("Ryde Profile", {profile: item})}>
+                            <Text style={{fontSize: 15, color:'red'}}>{item.displayName}: </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.rowText} onPress={()=>deleteComment(commentKeys[index])}>
+                            <Text style={styles.rowText}>{item.comment}</Text>
+                        </TouchableOpacity>
+
+                    </View>
+                    
+                )
+            }}
+            />
+        )
+
+
+    }
+
+
+
+
 
     const JoinButton = () => {
         //if(joined === true){
@@ -155,6 +235,8 @@ const RideDetails = ({navigation, route}) => {
 
     return (
         <ScrollView style={styles.ScrollContainer}>
+            <KeyboardAvoidingView behavior="padding">
+
             <MapView
                 provider="google"
                 style={styles.map}
@@ -178,7 +260,7 @@ const RideDetails = ({navigation, route}) => {
                             <Text> Organizer: {ride.organizer.username}</Text>
                             <Ionicons name="chevron-forward-outline" size={15}/>
                         </TouchableOpacity>
-                        <Text>{dateString()}</Text>
+                        <Text>{dateString(ride.date)}</Text>
                     </View>
                     <View style={styles.row}>
                         <TouchableOpacity style={styles.participantContainer} onPress={showParticipants}>
@@ -199,13 +281,31 @@ const RideDetails = ({navigation, route}) => {
                     <View style={styles.row}>
                         {ride.description.length===0?
                         <Text style={{fontStyle:"italic"}}> No description available.</Text>
-                        : <Text>{ride.description}</Text>}
+                        : <Text><Text style={{color:"red"}}>Description:</Text> {ride.description}</Text>}
+
                     </View>
+                    <View style={styles.row}>
+                        {ride.comments ?
+                        <Text style={{fontStyle:"italic"}}></Text>
+                        : <Text><Text style={{color:"black"}}>Comments:</Text></Text>}
+
+                    </View>
+                    <Comments/>
+
+                    
+
             <View style={styles.joinRideButtonContainer}>
+                <TextInput style={styles.input}
+                           selectionColor={"red"}
+                           placeholder={"Add a comment!"}
+                           onChangeText={(value) => setNewComment(value)}
+                               />
+                {newComment? <Button title="Add comment" onPress={addComment}></Button> : null }
                 <JoinButton/>
                 <CancelButton/>
             </View>
             </View>
+            </KeyboardAvoidingView>
         </ScrollView>
 
     )
@@ -289,7 +389,27 @@ const styles = StyleSheet.create({
         width: "50%",
         flexDirection: "row",
         alignItems: "center",
-    }
+    },
+    input: {
+        width: 170,
+        fontSize: 20,
+        textAlign: "center",
+    },
+    row2: {
+        marginVertical: 10,
+        marginHorizontal: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: "lightgrey",
+        textAlign: "left",
+        height: 50,
+    },
+    rowText: {
+        fontSize: 15,
+    },
+    dateText:{
+        fontSize: 10,
+        textAlign: 'right'
+    },
 
 });
 

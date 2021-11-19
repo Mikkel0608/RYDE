@@ -21,7 +21,7 @@ const Search = ({navigation}) => {
         })};
 
     const handleSearch = () => {
-        if(search.date < new date() ){
+        if(search.date < new Date() ){
             Alert.alert('Please select a valid date')
         } else {
             navigation.navigate("Search Results", {search})
@@ -49,13 +49,13 @@ const Search = ({navigation}) => {
                     />
                 </View>
                 <View style={styles.row}>
-                    <Text style={styles.textLabels}> Distance </Text>
+                    <Text style={styles.textLabels}> Distance (km) </Text>
                     <ModalDropdown dropdownTextStyle={styles.textLabels} dropdownStyle={styles.distancePicker} textStyle={styles.textLabels}
                                    options={['0-20 KM', '20-40 KM', '40-60 KM', '60-80 KM', '80-100 KM', '100-120 KM', '120-140 KM']}
                                    onSelect={(index, value) => setSearch({...search, distance: value})}/>
                 </View>
                 <View style={styles.row}>
-                    <Text style={styles.textLabels}> Average Speed </Text>
+                    <Text style={styles.textLabels}> Average Speed (km/t) </Text>
                     <ModalDropdown dropdownTextStyle={styles.textLabels} dropdownStyle={styles.distancePicker} textStyle={styles.textLabels}
                                    options={['Beginner: 20 km/h', 'Intermediate: 25 km/h', 'Experienced: 30 km/h', 'Pro: 35+ km/h']}
                                    onSelect={(index, value) => setSearch({...search, speed: value})}/>
