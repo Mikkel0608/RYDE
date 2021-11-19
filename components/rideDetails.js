@@ -142,7 +142,10 @@ const RideDetails = ({navigation, route}) => {
 
     
 
-    const deleteComment = (com_key) => {
+    const deleteComment = (com_key, commenter) => {
+        console.log(commenter)
+
+        if(user.uid === commenter){
         Alert.alert(
             'Warning',
             'Delete the comment?',
@@ -162,6 +165,30 @@ const RideDetails = ({navigation, route}) => {
               {text: 'No'}
             ],
           );
+        }
+      };
+
+      const cancelRide = () =>{
+        Alert.alert(
+            'Warning',
+            'Cancel the ride?',
+            [
+              {text: 'OK', onPress: () => {
+                let path = `Rides/${route.params.id}`;
+                try {
+                    firebase
+                        .database()
+                        .ref(path)
+                        .remove().then()
+                        navigation.navigate("HomePage")
+                } catch(e){
+                    Alert.alert(error.message)
+                }
+              }},
+              {text: 'No'}
+            ],
+          );
+
       };
     
 
@@ -186,7 +213,7 @@ const RideDetails = ({navigation, route}) => {
                         <TouchableOpacity style={styles.rowText} onPress={()=> navigation.navigate("Ryde Profile", {profile: item})}>
                             <Text style={{fontSize: 15, color:'red'}}>{item.displayName}: </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.rowText} onPress={()=>deleteComment(commentKeys[index])}>
+                        <TouchableOpacity style={styles.rowText} onPress={()=>deleteComment(commentKeys[index], commentArray[index].uid)}>
                             <Text style={styles.rowText}>{item.comment}</Text>
                         </TouchableOpacity>
 
@@ -221,7 +248,16 @@ const RideDetails = ({navigation, route}) => {
         }
     }
 
+
     const CancelButton = () => {
+        if(ride.organizer.uid === user.uid){
+            return (
+                <TouchableOpacity style={styles.cancelButton} onPress={()=> cancelRide()}>
+                    <Text style={styles.cancelRideButtonText}>Cancel ride</Text>
+                </TouchableOpacity>
+            )
+        }
+
         if(attendees.filter(e => e.uid === user.uid).length === 1){
             return (
                 <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
@@ -270,7 +306,7 @@ const RideDetails = ({navigation, route}) => {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.row}>
-                        <Text><Text style={{color:"red"}}>Start location:</Text> {ride.startAddress}</Text>
+                        <Text><Text style={{color:"red"}}>Start location:</Text> {ride.startAddress}, {ride.startPostal}</Text>
                     </View>
                     <View style={styles.row}>
                         <Text><Text style={{color:"red"}}>Distance:</Text> {ride.distance}</Text>
@@ -286,8 +322,8 @@ const RideDetails = ({navigation, route}) => {
                     </View>
                     <View style={styles.row}>
                         {ride.comments ?
-                        <Text style={{fontStyle:"italic"}}></Text>
-                        : <Text><Text style={{color:"black"}}>Comments:</Text></Text>}
+                        <Text style={{color:"black"}}>Comments:</Text>
+                        : null }
 
                     </View>
                     <Comments/>

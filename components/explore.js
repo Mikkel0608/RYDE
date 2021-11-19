@@ -21,7 +21,8 @@ const Search = ({navigation}) => {
         })};
 
     const handleSearch = () => {
-        if(search.date < new Date() ){
+        console.log(search.date.getDate())
+        if(search.date.getDate() < new Date().getDate() ){
             Alert.alert('Please select a valid date')
         } else {
             navigation.navigate("Search Results", {search})

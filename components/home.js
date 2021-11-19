@@ -13,6 +13,7 @@ const Home = ({navigation}) => {
     let filteredRideKeys = [];
     let filteredRideValues = [];
 
+
     useEffect( () => {
         setUser(firebase.auth().currentUser);
         try {
@@ -22,6 +23,8 @@ const Home = ({navigation}) => {
                 .orderByChild("date")
                 .startAt(new Date().getTime())
                 .on('value', snapshot => {
+
+                    if(snapshot.val() !== null){
 
                     
                     /*pga firebase struktur bliver vi nødt til at dele det op sådanne: id'er og værdier*/
@@ -44,6 +47,7 @@ const Home = ({navigation}) => {
                     setMyRideKeys(filteredRideKeys);
                     filteredRideKeys = [];
                     filteredRideValues = [];
+                    }
                 })
         } catch (error) {
             console.log(error.message)
@@ -51,6 +55,7 @@ const Home = ({navigation}) => {
         //Deps er sat til user, da det er det eneste der fungerer
         //Med tomt array loader den ikke turene nok. Uden deps ender den i infinite loop.
     },[user]);
+
 
     const handleRideDetails = (id) => {
         navigation.navigate("Ride Details", {id})
