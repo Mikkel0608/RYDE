@@ -69,7 +69,7 @@ const Home = ({navigation}) => {
 
             <Text style={styles.label}>Your upcoming rides</Text>
             <View style={styles.horizontalScroller}>
-                <FlatList horizontal={true} keyExtractor={(item, index) => myRideKeys[index]} data={myRideValues} renderItem={({item, index}) => {
+                <FlatList keyExtractor={(item, index) => myRideKeys[index]} data={myRideValues} renderItem={({item, index}) => {
                     return (
                         <View>
                             <TouchableOpacity onPress={() => handleRideDetails(myRideKeys[index])}>

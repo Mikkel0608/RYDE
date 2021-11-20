@@ -11,10 +11,10 @@ const SignUpPage = ({navigation}) => {
 
     
     function writeUserData(user) {
-        const {name, phone, photoUrl, uid, email} = user;
+        const {name, phone, photoUrl, uid, email, signedUp} = user;
         firebase.database()
             .ref('/users/' + user.uid)
-            .push({name, phone, photoUrl, uid, email})
+            .push({name, phone, photoUrl, uid, email, signedUp})
             .then(data =>{
             console.log(data)
         })
@@ -34,7 +34,8 @@ const SignUpPage = ({navigation}) => {
                         phone: ''/*u.phone*/,
                         photoUrl: ''/*u.photoUrl*/,
                         uid: user.user.uid,
-                        email: u.email
+                        email: u.email,
+                        signedUp: new Date().getTime()
                     }
                     writeUserData(userData)
 

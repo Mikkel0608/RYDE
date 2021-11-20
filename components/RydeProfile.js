@@ -28,6 +28,7 @@ const RydeProfile = ({navigation, route}) => {
             .orderByKey()
             .on('value', snapshot => {
                 let prof = Object.values(snapshot.val())[0]
+                
                                 
                 setProfile(prof)
             })

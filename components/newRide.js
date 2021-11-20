@@ -28,6 +28,7 @@ const NewRide = ({navigation, route}) => {
         setNewRide({...newRide,
             organizer: {uid: user.uid, username: user.displayName},
             attendees: [newRide.attendees, {uid: user.uid, username: user.displayName}],
+            cancelled: 0
         })
         if(route.params?.startAddress) {
             setNewRide({...newRide,
@@ -79,7 +80,7 @@ const NewRide = ({navigation, route}) => {
 
     const handleCreate = async () => {
         newRide.date = newRide.date.getTime();
-        const {name, date, distance, speed, description, organizer, attendees, startLatitude, startLongitude, startAddress, startPostal} = newRide;
+        const {name, date, cancelled, distance, speed, description, organizer, attendees, startLatitude, startLongitude, startAddress, startPostal} = newRide;
         if(name.length === 0 || distance.length === 0 || speed.length === 0 || startAddress === "") {
             Alert.alert("Please fill out both name, distance, speed and start location!")
         } else {
@@ -87,7 +88,7 @@ const NewRide = ({navigation, route}) => {
                 firebase
                     .database()
                     .ref('/Rides/')
-                    .push({ name, date, distance, speed, description, organizer, attendees, startLatitude, startLongitude, startAddress, startPostal})
+                    .push({ name, date, cancelled, distance, speed, description, organizer, attendees, startLatitude, startLongitude, startAddress, startPostal})
                     .then((snapshot) => {
                         setNewRide(initialState);
                         navigation.popToTop();

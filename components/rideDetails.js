@@ -174,7 +174,8 @@ const RideDetails = ({navigation, route}) => {
                     firebase
                         .database()
                         .ref(path)
-                        .remove().then()
+                        .update({cancelled: 1}).then()
+                        Alert.alert('cancelled')
                         navigation.navigate("HomePage")
                 } catch(e){
                     Alert.alert(error.message)
@@ -204,7 +205,7 @@ const RideDetails = ({navigation, route}) => {
             <FlatList style={styles.container} data={commentArray} keyExtractor={(item, index) => commentKeys[index]} renderItem={({item, index}) => {
                 return (
                     <View style={styles.row2}>
-                        <Text style={styles.dateText}>Date: {dateString(item.date)}</Text>
+                        <Text style={styles.dateText}>{dateString(item.date)}</Text>
                         <TouchableOpacity style={styles.rowText} onPress={()=> navigation.navigate("Ryde Profile", {profile: item})}>
                             <Text style={{fontSize: 15, color:'red'}}>{item.displayName}: </Text>
                         </TouchableOpacity>

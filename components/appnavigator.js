@@ -16,7 +16,8 @@ import {SafeAreaView} from "react-native";
 import RideDetails from "./rideDetails";
 import RideParticipants from "./rideParticipants";
 import LogoHeader from "./logoHeader";
-import RydeProfile from './RydeProfile';
+import RydeProfile from './RydeProfile2';
+import UpdateProfile from './updateInfo';
 
 
 const AppNavigator = ({navigation}) => {
@@ -35,6 +36,7 @@ const AppNavigator = ({navigation}) => {
                 <Stack.Screen name="Ride Details" component={RideDetails} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}, headerTransparent: true, headerTitle:"", headerBackTitle:"Back"}}/>
                 <Stack.Screen name="Ride Participants" component={RideParticipants} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
                 <Stack.Screen name="Ryde Profile" component={RydeProfile} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
+                <Stack.Screen name="Update Profile" component={UpdateProfile} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
 
             </Stack.Navigator>
         )
@@ -46,6 +48,8 @@ const AppNavigator = ({navigation}) => {
                 <Stack.Screen name="Ride Details" component={RideDetails} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}, headerTransparent: true, headerTitle:"", headerBackTitle:"Back"}}/>
                 <Stack.Screen name="Ride Participants" component={RideParticipants} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
                 <Stack.Screen name="Ryde Profile" component={RydeProfile} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
+                <Stack.Screen name="Update Profile" component={UpdateProfile} options={{headerTintColor: "red", headerTitleStyle: {color: "black"}}}/>
+
             </Stack.Navigator>
         )
     }
