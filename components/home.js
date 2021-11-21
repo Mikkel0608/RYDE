@@ -33,7 +33,6 @@ const Home = ({navigation}) => {
 
                     /*Der loopes gennem de forskellige rides for at tjekke om brugeren har joinet dem*/
                    for (let i=0; i<rideValues.length; i++) {
-                       console.log(rideValues[i].cancelled)
                        let rideAttendeesValues = Object.values(rideValues[i].attendees);
 
                        if(rideAttendeesValues.filter(e => e.uid === user.uid).length>0 && rideValues[i].cancelled !== 1) {

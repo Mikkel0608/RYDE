@@ -18,6 +18,7 @@ const searchResult = ({navigation, route}) => {
                 .startAt(route.params.search.date.setHours(0,0,0,0))
                 .endAt(route.params.search.date.setHours(23,59,59,59))
                 .on('value', snapshot => {
+                    //console.log(snapshot.val())
                     setSearchResults(snapshot.val());
                 })
         } catch (error) {
