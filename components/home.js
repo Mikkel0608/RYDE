@@ -67,7 +67,8 @@ const Home = ({navigation}) => {
                 <Text style={styles.pageHeader}>Hello <Text style={{color:"red"}}>{firebase.auth().currentUser.displayName}</Text></Text>
             </View>
 
-            <Text style={styles.label}>Your upcoming rides</Text>
+            {myRideValues.length> 0 ? <Text style={styles.label}>Your upcoming rides</Text>
+            : <Text style={styles.label}>You have not yet signed up for any upcoming rides!</Text>}
             <View style={styles.horizontalScroller}>
                 <FlatList keyExtractor={(item, index) => myRideKeys[index]} data={myRideValues} renderItem={({item, index}) => {
                     return (
