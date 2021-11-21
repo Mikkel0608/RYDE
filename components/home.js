@@ -26,7 +26,7 @@ const Home = ({navigation}) => {
 
                     if(snapshot.val() !== null){
 
-                    
+
                     /*pga firebase struktur bliver vi nødt til at dele det op sådanne: id'er og værdier*/
                     let rideKeys = Object.keys(snapshot.val());
                     let rideValues = Object.values(snapshot.val());
@@ -69,7 +69,7 @@ const Home = ({navigation}) => {
             {myRideValues.length> 0 ? <Text style={styles.label}>Your upcoming rides</Text>
             : <Text style={styles.label}>You have not yet signed up for any upcoming rides!</Text>}
             <View style={styles.horizontalScroller}>
-                <FlatList keyExtractor={(item, index) => myRideKeys[index]} data={myRideValues} renderItem={({item, index}) => {
+                <FlatList horizontal keyExtractor={(item, index) => myRideKeys[index]} data={myRideValues} renderItem={({item, index}) => {
                     return (
                         <View>
                             <TouchableOpacity onPress={() => handleRideDetails(myRideKeys[index])}>

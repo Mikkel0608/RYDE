@@ -135,7 +135,7 @@ const RideDetails = ({navigation, route}) => {
         }
     }
 
-    
+
 
     const deleteComment = (com_key, commenter) => {
         console.log(commenter)
@@ -186,11 +186,11 @@ const RideDetails = ({navigation, route}) => {
           );
 
       };
-    
 
-    
 
-    
+
+
+
 
     const Comments = () =>{
         let commentArray;
@@ -201,7 +201,26 @@ const RideDetails = ({navigation, route}) => {
             commentKeys = Object.keys(ride.comments)
 
     }
+        if(commentArray) {
         return (
+            commentArray.map((item, index) => {
+                return(
+                <View style={styles.row2}>
+                    <Text style={styles.dateText}>{dateString(item.date)}</Text>
+                    <TouchableOpacity style={styles.rowText} onPress={()=> navigation.navigate("Ryde Profile", {profile: item})}>
+                        <Text style={{fontSize: 15, color:'red'}}>{item.displayName}: </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.rowText} onPress={()=>deleteComment(commentKeys[index], commentArray[index].uid)}>
+                        <Text style={styles.rowText}>{item.comment}</Text>
+                    </TouchableOpacity>
+                </View>
+                )
+                })
+        )
+        } else {
+            return (<Text/>)
+        }
+            /*
             <FlatList style={styles.container} data={commentArray} keyExtractor={(item, index) => commentKeys[index]} renderItem={({item, index}) => {
                 return (
                     <View style={styles.row2}>
@@ -214,11 +233,12 @@ const RideDetails = ({navigation, route}) => {
                         </TouchableOpacity>
 
                     </View>
-                    
+
                 )
             }}
             />
-        )
+
+             */
 
 
     }
@@ -324,7 +344,7 @@ const RideDetails = ({navigation, route}) => {
                     </View>
                     <Comments/>
 
-                    
+
 
             <View style={styles.joinRideButtonContainer}>
                 <TextInput style={styles.input}
