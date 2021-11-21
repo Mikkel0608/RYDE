@@ -57,7 +57,7 @@ const AppNavigator = ({navigation}) => {
     function StackNavigationProfile() {
         return(
             <Stack.Navigator>
-                <Stack.Screen name="Profile" component={Profile}/>
+                <Stack.Screen name="Profile" component={RydeProfile}/>
             </Stack.Navigator>
         )
     }

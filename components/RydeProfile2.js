@@ -13,11 +13,15 @@ const RydeProfile = ({navigation, route}) => {
     const [profile, setProfile] = useState({});
     const [createdRidesCount, setCreatedRidesCount] = useState(0);
     const [user, setUser] = useState({});
+    const [ownProfile, setOwnProfile] = useState(false);
+    let uid;
 
-
-    const uid = route.params.profile.uid;
-
-
+    //let uid = route.params.profile.uid;
+    if (!route.params) {
+        uid = firebase.auth().currentUser.uid;
+    } else {
+        uid = route.params.profile.uid;
+    }
 
     useEffect(() => {
         let currUser = firebase.auth().currentUser;
@@ -31,8 +35,8 @@ const RydeProfile = ({navigation, route}) => {
             .on('value', snapshot => {
                 let prof = Object.values(snapshot.val())[0]
                 prof.key = Object.keys(snapshot.val())[0]
-                
-                                
+
+
                 setProfile(prof)
             })
         } catch (error){
@@ -51,7 +55,7 @@ const RydeProfile = ({navigation, route}) => {
                 //.equalTo(profile.uid) Hvorfor virker det her lort ikke???
                 .on('value', snapshot => {
                     if (snapshot.val() !== null){
-                    
+
 
 
                     let rides = Object.values(snapshot.val())
@@ -76,6 +80,9 @@ const RydeProfile = ({navigation, route}) => {
 
 
     }, []);
+    const handleSignout = async () => {
+        await firebase.auth().signOut();
+    }
 
     if (!profile){
         return(
@@ -90,7 +97,7 @@ const RydeProfile = ({navigation, route}) => {
           <Text style={styles.name}>{profile.name}</Text>
           <Text style={{fontSize: 18}}>Stats:</Text>
           <Text>RYDE user since: {func.date(profile.signedUp)} </Text>
-            {/*createdRidesCount > 0 ? 
+            {/*createdRidesCount > 0 ?
                 <Text>Number of created rides: {createdRidesCount}</Text>
             :   <Text>Number of created rides: 'none'</Text>
             */}
@@ -100,17 +107,24 @@ const RydeProfile = ({navigation, route}) => {
               <Text style={styles.name}>John Doe</Text>
               <Text style={styles.info}>UX Designer / Mobile developer</Text>
               <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
-              
+
               <TouchableOpacity style={styles.buttonContainer}>
-                <Text>Email: {profile.email}</Text>  
-              </TouchableOpacity>              
+                <Text>Email: {profile.email}</Text>
+              </TouchableOpacity>
               <TouchableOpacity style={styles.buttonContainer}>
-                <Text>Phone: {profile.phone}</Text> 
+                <Text>Phone: {profile.phone}</Text>
               </TouchableOpacity>
               {user.uid === uid ?
               <TouchableOpacity style={styles.buttonContainer} onPress={()=> navigation.navigate("Update Profile", {profile: profile})}>
                  <Text>Update info</Text>
               </TouchableOpacity> : null }
+                {user.uid === uid ?
+                    <View style={styles.signOutButtonContainer}>
+                    <TouchableOpacity style={styles.signOutButton} onPress={handleSignout}>
+                        <Text style={styles.signOutButtonText}>Sign out</Text>
+                    </TouchableOpacity>
+                    </View>
+                    : null}
             </View>
         </View>
       </View>
@@ -173,6 +187,28 @@ const styles = StyleSheet.create({
     borderRadius:30,
     backgroundColor: "red",
   },
+    signOutButton: {
+        backgroundColor: 'red',
+        width: 200,
+        height: 50,
+        borderRadius: 20,
+        marginTop: 33,
+        shadowColor: "red",
+        shadowOpacity: 0.5,
+        shadowOffset: {
+            height: 2,
+        },
+        shadowRadius: 3.84,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    signOutButtonText: {
+        color:"white",
+        fontSize: 25,
+    },
+    signOutButtonContainer: {
+        alignItems: "center",
+    },
 });
 
 export default RydeProfile;
