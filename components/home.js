@@ -33,10 +33,10 @@ const Home = ({navigation}) => {
 
                     /*Der loopes gennem de forskellige rides for at tjekke om brugeren har joinet dem*/
                    for (let i=0; i<rideValues.length; i++) {
+                       console.log(rideValues[i].cancelled)
                        let rideAttendeesValues = Object.values(rideValues[i].attendees);
 
-                       /*Hvis brugeren har joinet, lægges id'et også ind i objektet*/
-                       if(rideAttendeesValues.filter(e => e.uid === user.uid).length>0) {
+                       if(rideAttendeesValues.filter(e => e.uid === user.uid).length>0 && rideValues[i].cancelled !== 1) {
 
                            filteredRideKeys.push(rideKeys[i]);
                             filteredRideValues.push(rideValues[i])
