@@ -5,9 +5,11 @@ import RideView from "./rideView";
 
 
 const searchResult = ({navigation, route}) => {
-    const [searchResults, setSearchResults] = useState();
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchResultsKey, setSearchResultsKeys] = useState([]);
 
     useEffect(() => {
+        console.log(searchResults)
         //const startDate = route.params.search.date.setHours(0,0,0,0);
         //const endDate = route.params.search.date.setHours(23,59,59,59);
         try {
@@ -18,30 +20,55 @@ const searchResult = ({navigation, route}) => {
                 .startAt(route.params.search.date.setHours(0,0,0,0))
                 .endAt(route.params.search.date.setHours(23,59,59,59))
                 .on('value', snapshot => {
-                    //console.log(snapshot.val())
-                    setSearchResults(snapshot.val());
+
+                    if(snapshot.val() !== null){
+
+                    let res = Object.values(snapshot.val())
+                    let key = Object.keys(snapshot.val())
+
+                    let i;
+                    let filteredResultValues = [];
+                    let filteredResultKeys = [];
+
+                    /*Der skal kun vises rides som ikke er cancelled*/
+                    for (i=0; i<res.length; i++){
+                        if(res[i].cancelled === 0){
+                            filteredResultValues.push(res[i]);
+                            filteredResultKeys.push(key[i])
+                        }
+                    }
+
+
+                    setSearchResultsKeys(filteredResultKeys)
+                    setSearchResults(filteredResultValues);
+
+                    //gammel kode, hvis man ikke fjerner cancelled rides
+                    //setSearchResults(snapshot.val());
+                }
                 })
         } catch (error) {
             console.log(error.message)
         }
     }, []);
 
-    if(!searchResults) {
-        return(
-            <Text> No trips found. Please search again. </Text>
-        )
-    }
+
 
     const handleSelectResult = (id, item) => {
         navigation.navigate("Ride Details", {id})
     }
 
-    const resultArray = Object.values(searchResults);
-    const resultKeys = Object.keys(searchResults);
+
+    //gammel kode, før cancel
+    //const resultArray = Object.values(searchResults);
+    //const resultKeys = Object.keys(searchResults);
+
+
+    const resultArray = searchResults;
+    const resultKeys = searchResultsKey;
 
     return (
         <View style={styles.container}>
-                <FlatList data={resultArray} keyExtractor={(item, index) => resultKeys[index]} renderItem={({item, index}) => {
+                {searchResults.length > 0 ?<FlatList data={resultArray} keyExtractor={(item, index) => resultKeys[index]} renderItem={({item, index}) => {
                     return (
                         <View>
                         <TouchableOpacity style={styles.container} onPress={() => handleSelectResult(resultKeys[index], item)}>
@@ -51,6 +78,7 @@ const searchResult = ({navigation, route}) => {
                     )
                 }}
                 />
+                :<Text> No trips found. Please search again. </Text>}
         </View>
     )
 }
