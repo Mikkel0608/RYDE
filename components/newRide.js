@@ -7,7 +7,8 @@ import firebase from "firebase";
 import MapScreen from "./mapScreen";
 
 const NewRide = ({navigation, route}) => {
-    const initialState = { name: '',
+    const initialState = {
+        name: "",
         date: new Date(),
         distance: '',
         speed: '',
@@ -79,12 +80,13 @@ const NewRide = ({navigation, route}) => {
 
 
     const handleCreate = async () => {
-        newRide.date = newRide.date.getTime();
-        const {name, date, cancelled, distance, speed, description, organizer, attendees, startLatitude, startLongitude, startAddress, startPostal} = newRide;
+        const {name, distance, speed, startAddress} = newRide;
         if(name.length === 0 || distance.length === 0 || speed.length === 0 || startAddress === "") {
             Alert.alert("Please fill out both name, distance, speed and start location!")
         } else {
             try {
+                newRide.date = newRide.date.getTime();
+                const {name, date, cancelled, distance, speed, description, organizer, attendees, startLatitude, startLongitude, startAddress, startPostal} = newRide;
                 firebase
                     .database()
                     .ref('/Rides/')
