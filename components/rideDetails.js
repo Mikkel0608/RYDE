@@ -133,8 +133,6 @@ const RideDetails = ({navigation, route}) => {
             .ref(`Rides/${route.params.id}/comments`)
             .push(comment);
             setNewComment('');
-            this.textInput.clear();
-
         }
     }
 
@@ -354,7 +352,6 @@ const RideDetails = ({navigation, route}) => {
                            selectionColor={"red"}
                            placeholder={"Add a comment!"}
                            onChangeText={(value) => setNewComment(value)}
-                           ref={input => { this.textInput = input}}
                                />
                 {newComment? <Button title="Add comment" onPress={addComment}></Button> : null }
                 <JoinButton/>

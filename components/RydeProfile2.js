@@ -147,11 +147,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginTop:30
   },
-  name:{
-    fontSize:22,
-    color:"#FFFFFF",
-    fontWeight:'600',
-  },
   body:{
     marginTop:40,
   },
