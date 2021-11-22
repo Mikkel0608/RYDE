@@ -206,7 +206,7 @@ const RideDetails = ({navigation, route}) => {
         return (
             commentArray.map((item, index) => {
                 return(
-                <View style={styles.row2}>
+                <View style={styles.row2} key={index}>
                     <Text style={styles.dateText}>{dateString(item.date)}</Text>
                     <TouchableOpacity style={styles.rowText} onPress={()=> navigation.navigate("Ryde Profile", {profile: item})}>
                         <Text style={{fontSize: 15, color:'red'}}>{item.displayName}: </Text>
