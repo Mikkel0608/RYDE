@@ -7,7 +7,7 @@ import {SafeAreaView} from "react-native-web";
 
 
 const Search = ({navigation}) => {
-    const initialState = { date: new Date(), distance: '', speed: '', start: ''};
+    const initialState = { date: new Date(), distance: '', speed: '', radius: ''};
     const [search, setSearch] = useState(initialState);
 
     const changeTextInput = (name, event) => {
@@ -21,7 +21,6 @@ const Search = ({navigation}) => {
         })};
 
     const handleSearch = () => {
-        console.log(search.date.getDate())
         if(search.date.getDate() < new Date().getDate() ){
             Alert.alert('Please select a valid date')
         } else {
@@ -62,12 +61,14 @@ const Search = ({navigation}) => {
                                    onSelect={(index, value) => setSearch({...search, speed: value})}/>
                 </View>
                 <View style={styles.row}>
-                    <Text style={styles.textLabels}> Start Location </Text>
+                    <Text style={styles.textLabels}>Radius (km)</Text>
                     <TextInput style={styles.input}
                                selectionColor={"red"}
-                               placeholder={"Type start location..."}
+                               placeholder={"Specify"}
                                maxLength={50}
-                               onChangeText={(value) => setSearch({...search, start: value})}
+                               keyboardType={'number-pad'}
+                               returnKeyType='done'
+                               onChangeText={(value) => setSearch({...search, radius: value})}
                     />
                 </View>
 

@@ -7,12 +7,15 @@ import RideView from "./rideView";
 const searchResult = ({navigation, route}) => {
     const [searchResults, setSearchResults] = useState([]);
     const [searchResultsKey, setSearchResultsKeys] = useState([]);
+    let search = route.params.search;
 
     useEffect(() => {
-        console.log(searchResults)
-        //const startDate = route.params.search.date.setHours(0,0,0,0);
-        //const endDate = route.params.search.date.setHours(23,59,59,59);
+        console.log(Object.values(search))
+
         try {
+            
+
+
             firebase.database()
                 .ref()
                 .child("Rides")
@@ -20,8 +23,26 @@ const searchResult = ({navigation, route}) => {
                 .startAt(route.params.search.date.setHours(0,0,0,0))
                 .endAt(route.params.search.date.setHours(23,59,59,59))
                 .on('value', snapshot => {
-
                     if(snapshot.val() !== null){
+
+                    //Laver et array af de forskellige filtre
+                    //For at slippe for en masse if-statements når man skal filtrere forskellige søgninger
+                    let filters = [];
+                    let filterKeys = Object.keys(search);
+                    let filterValues = Object.values(search)
+                    for(let i=1; i<filterValues.length; i++){//i sættes til 1 da vi ikke skal bruge date, den er der allerede filtreret på
+
+                        if(filterValues[i] !== '' && filterKeys[i] !== 'radius'){ //Fjern her begrænsning på radius når det engang er lavet********************************************
+
+                            filters.push(//array laves med filteret og værdien
+                                {
+                                    filter: filterKeys[i],
+                                    val: filterValues[i] 
+                                }
+                                )
+                        }
+                    }
+                
 
                     let res = Object.values(snapshot.val())
                     let key = Object.keys(snapshot.val())
@@ -29,12 +50,45 @@ const searchResult = ({navigation, route}) => {
                     let i;
                     let filteredResultValues = [];
                     let filteredResultKeys = [];
+                    //console.log(res[0])
+
+                    //let {longitude, latitude}; //HENT HER BRUGERENS LOKATION IND*******************************************
 
                     /*Der skal kun vises rides som ikke er cancelled*/
                     for (i=0; i<res.length; i++){
                         if(res[i].cancelled === 0){
-                            filteredResultValues.push(res[i]);
-                            filteredResultKeys.push(key[i])
+
+                            //let {startLongitude, startLatitude} = res[i] //Her hentes turens startpunkter ind************************************************
+                        
+                            
+                            let filterCount = 0;
+                            filters.forEach((e, x) =>{
+                                //Hvis der er et radius filter, gør da:
+                                if (e.filter=== 'radius'){
+                                    //let radius = e.val;
+    
+                                    
+                                    
+                                    //Skriv her en funktion der kan finde afstanden i fugleflugt mellem de to punkter**************************************************
+                                    //Hvis afstand i fugleflugt <= radius, øg da filterCount med én*********************************************************
+
+
+                                    
+    
+                                } else if (res[i][e.filter] === e.val ){//Hvis det ikke er radius skal den bare kigge direkte på værdierne
+                                        filterCount++;                      //Hvis filteret matcher resultatet øges filterCount for at holde styr på hvor mange 'matches' man har
+                                }
+
+
+
+
+                            })
+
+                            if(filterCount === filters.length){//Hvis alle kriterierne er opfyldte, tilføjes turen til det endelige array
+
+                                filteredResultValues.push(res[i]);
+                                filteredResultKeys.push(key[i])
+                            }
                         }
                     }
 
