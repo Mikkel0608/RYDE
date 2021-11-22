@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import func from '../functions/helperFunctions';
 import Ionicons from "react-native-vector-icons/Ionicons";
+import {Touchable} from "react-native-web";
 
 const RydeProfile = ({navigation, route}) => {
     const [profile, setProfile] = useState({});
@@ -35,7 +36,7 @@ const RydeProfile = ({navigation, route}) => {
         } else {
             uid = route.params.profile.uid;
         }
-    },[navigation])
+    },[])
 
     const handleMenu = () => {
         setMenuVisible(true);
@@ -150,6 +151,7 @@ const RydeProfile = ({navigation, route}) => {
           <Modal transparent={true}
                  visible={menuVisible}
                  animationType={"slide"}>
+              <TouchableOpacity style={styles.transparentModal} onPress={() => {setMenuVisible(false)}}/>
               <View style={styles.editMenu}>
                   <View style={styles.rowMenuContainer}>
                   <TouchableOpacity style={styles.rowMenu} onPress={handleUpdateProfile}>
@@ -249,6 +251,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
         shadowOpacity: 0.2,
         shadowColor: "grey",
+    },
+    transparentModal: {
+        height: "80%",
+        flex: 1,
     },
     rowMenuContainer: {
         marginBottom: 22,
