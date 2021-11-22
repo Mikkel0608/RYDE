@@ -1,27 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import firebase from "firebase";
 import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity
+    StyleSheet,
+    Text,
+    View,
+    Image,
+    TouchableOpacity,
+    Button,
+    Modal,
+    ScrollView
 } from 'react-native';
 import func from '../functions/helperFunctions';
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const RydeProfile = ({navigation, route}) => {
     const [profile, setProfile] = useState({});
     const [createdRidesCount, setCreatedRidesCount] = useState(0);
     const [user, setUser] = useState({});
-    const [ownProfile, setOwnProfile] = useState(false);
-    let uid;
+    const [menuVisible, setMenuVisible] = useState(false);
 
+
+    let uid;
     //let uid = route.params.profile.uid;
-    if (!route.params) {
-        uid = firebase.auth().currentUser.uid;
-    } else {
-        uid = route.params.profile.uid;
-    }
+    React.useLayoutEffect(() => {
+        if (!route.params) {
+            uid = firebase.auth().currentUser.uid;
+                navigation.setOptions({
+                    headerRight: () => (
+                        <TouchableOpacity style={{paddingRight: 15}} onPress={handleMenu}>
+                            <Ionicons name="ellipsis-horizontal" size={25} color={"red"}/>
+                        </TouchableOpacity>
+                    ),
+                });
+        } else {
+            uid = route.params.profile.uid;
+        }
+    },[navigation])
+
+    const handleMenu = () => {
+        setMenuVisible(true);
+    };
+
+    const handleUpdateProfile = () => {
+        setMenuVisible(false);
+        navigation.navigate("Update Profile", {profile: profile});
+    };
 
     useEffect(() => {
         let currUser = firebase.auth().currentUser;
@@ -81,6 +104,7 @@ const RydeProfile = ({navigation, route}) => {
 
     }, []);
     const handleSignout = async () => {
+        setMenuVisible(false);
         await firebase.auth().signOut();
     }
 
@@ -91,51 +115,76 @@ const RydeProfile = ({navigation, route}) => {
     }
 
     return (
-      <View style={styles.container}>
-          <View style={styles.header}></View>
-          <Image style={styles.avatar} source={{uri: 'https://www.cbs.dk/files/cbs.dk/styles/cbs_staff_list_view_images/public/sine-pic-18-web.jpg?itok=fw54u1lE'}}/>
-          <Text style={styles.name}>{profile.name}</Text>
-          <Text style={{fontSize: 18}}>Stats:</Text>
-          <Text>RYDE user since: {func.date(profile.signedUp)} </Text>
+      <ScrollView style={styles.container}>
+          <View style={styles.headerContainer}>
+              <View style={styles.header}/>
+              <Image style={styles.avatar} source={{uri: 'https://www.cbs.dk/files/cbs.dk/styles/cbs_staff_list_view_images/public/sine-pic-18-web.jpg?itok=fw54u1lE'}}/>
+              <Text style={styles.name}>{profile.name}</Text>
+              <Text style={styles.row}>User since: {func.date(profile.signedUp)} </Text>
+          </View>
             {/*createdRidesCount > 0 ?
                 <Text>Number of created rides: {createdRidesCount}</Text>
             :   <Text>Number of created rides: 'none'</Text>
             */}
 
           <View style={styles.body}>
-            <View style={styles.bodyContent}>
-              <Text style={styles.name}>John Doe</Text>
-              <Text style={styles.info}>UX Designer / Mobile developer</Text>
-              <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
-
-              <TouchableOpacity style={styles.buttonContainer}>
-                <Text>Email: {profile.email}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonContainer}>
-                <Text>Phone: {profile.phone}</Text>
-              </TouchableOpacity>
-              {user.uid === uid ?
-              <TouchableOpacity style={styles.buttonContainer} onPress={()=> navigation.navigate("Update Profile", {profile: profile})}>
-                 <Text>Update info</Text>
-              </TouchableOpacity> : null }
-                {user.uid === uid ?
-                    <View style={styles.signOutButtonContainer}>
-                    <TouchableOpacity style={styles.signOutButton} onPress={handleSignout}>
-                        <Text style={styles.signOutButtonText}>Sign out</Text>
-                    </TouchableOpacity>
-                    </View>
-                    : null}
-            </View>
+              <View style={styles.row}>
+                  <Text><Text style={{color:"red"}}>Email:</Text> {profile.email}</Text>
+              </View>
+              <View style={styles.row}>
+                  <Text><Text style={{color:"red"}}>Phone:</Text> {profile.phone}</Text>
+              </View>
+              <View style={styles.row}>
+                  <Text><Text style={{color:"red"}}>Favorite cycling type:</Text> {profile.cyclingType}</Text>
+              </View>
+              <View style={styles.row}>
+                  <Text><Text style={{color:"red"}}>Age:</Text> {profile.age}</Text>
+              </View>
+              <View style={styles.row}>
+                  <Text><Text style={{color:"red"}}>Years of cycling experience:</Text> {profile.cyclingExperience}</Text>
+              </View>
+              <View style={styles.row}>
+                  <Text><Text style={{color:"red"}}>Description:</Text> {profile.description}</Text>
+              </View>
         </View>
-      </View>
+          <Modal transparent={true}
+                 visible={menuVisible}
+                 animationType={"slide"}>
+              <View style={styles.editMenu}>
+                  <View style={styles.rowMenuContainer}>
+                  <TouchableOpacity style={styles.rowMenu} onPress={handleUpdateProfile}>
+                      <Text style={{fontSize: 20, color: "grey"}}>Update profile</Text>
+                  </TouchableOpacity>
+                  </View>
+                  <View style={styles.rowMenuContainer}>
+                  <TouchableOpacity style={styles.rowMenu} onPress={handleSignout}>
+                      <Text style={{fontSize: 20, color: "grey"}}>Sign out</Text>
+                  </TouchableOpacity>
+                  </View>
+                  <View style={styles.rowMenuContainer}>
+                  <TouchableOpacity style={styles.rowMenu} onPress={()=> {setMenuVisible(false)}}>
+                      <Text style={{fontSize: 20, color: "red"}}>Cancel</Text>
+                  </TouchableOpacity>
+                  </View>
+              </View>
+          </Modal>
+      </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        backgroundColor: "white",
+    },
   header:{
     backgroundColor: "red",
     height:100,
   },
+    headerContainer: {
+      paddingBottom: 10,
+      borderBottomWidth: 1,
+        borderBottomColor: "grey",
+    },
   avatar: {
     width: 130,
     height: 130,
@@ -158,7 +207,10 @@ const styles = StyleSheet.create({
   name:{
     fontSize:28,
     color: "#696969",
-    fontWeight: "600"
+    fontWeight: "600",
+      paddingTop: 10,
+      paddingBottom: 20,
+      paddingLeft: 10,
   },
   info:{
     fontSize:16,
@@ -182,26 +234,29 @@ const styles = StyleSheet.create({
     borderRadius:30,
     backgroundColor: "red",
   },
-    signOutButton: {
-        backgroundColor: 'red',
-        width: 200,
-        height: 50,
-        borderRadius: 20,
-        marginTop: 33,
-        shadowColor: "red",
-        shadowOpacity: 0.5,
-        shadowOffset: {
-            height: 2,
-        },
-        shadowRadius: 3.84,
-        justifyContent: "center",
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
         alignItems: "center",
+        marginBottom: 20,
+        paddingHorizontal: 10,
     },
-    signOutButtonText: {
-        color:"white",
-        fontSize: 25,
+    editMenu: {
+        justifyContent: "center",
+        height: "20%",
+        marginTop: "auto",
+        backgroundColor: "white",
+        alignItems: "center",
+        shadowOpacity: 0.2,
+        shadowColor: "grey",
     },
-    signOutButtonContainer: {
+    rowMenuContainer: {
+        marginBottom: 22,
+        marginHorizontal: 10,
+        flexDirection: "row",
+    },
+    rowMenu: {
+      width: "100%",
         alignItems: "center",
     },
 });
