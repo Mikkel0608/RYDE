@@ -10,6 +10,7 @@ const searchResult = ({navigation, route}) => {
     let search = route.params.search;
 
     useEffect(() => {
+        console.log(route.params.location)
         console.log(Object.values(search))
 
         try {

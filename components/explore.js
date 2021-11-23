@@ -1,14 +1,40 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View, TextInput, Button, TouchableOpacity, ScrollView, Alert} from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import ModalDropdown from "react-native-modal-dropdown";
 import firebase from "firebase";
 import {SafeAreaView} from "react-native-web";
+import * as Location from 'expo-location';
+import {Accuracy} from "expo-location";
+
+
 
 
 const Search = ({navigation}) => {
     const initialState = { date: new Date(), distance: '', speed: '', radius: ''};
     const [search, setSearch] = useState(initialState);
+    const [hasLocationPermission, setlocationPermission] = useState(false)
+    const [currentLocation, setCurrentLocation] = useState(null)
+
+
+    const getLocationPermission = async () => {
+        await Location.requestForegroundPermissionsAsync().then((item)=>{
+            setlocationPermission(item.granted)
+        } );
+
+    };
+
+    const updateLocation = async () => {
+        await Location.getCurrentPositionAsync({accuracy: Accuracy.Balanced}).then((item)=>{
+            setCurrentLocation(item.coords)
+            console.log(currentLocation)
+        } );
+   };
+
+    useEffect(() => {
+        const response = getLocationPermission()
+    }, []);
+
 
     const changeTextInput = (name, event) => {
         setSearch({...search, [name]: event})
@@ -24,7 +50,7 @@ const Search = ({navigation}) => {
         if(search.date.getDate() < new Date().getDate() ){
             Alert.alert('Please select a valid date')
         } else {
-            navigation.navigate("Search Results", {search})
+            navigation.navigate("Search Results", {search: search, location: currentLocation})
         }
     }
 
@@ -76,6 +102,8 @@ const Search = ({navigation}) => {
                     <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
                         <Text style={styles.searchButtonText}>Search</Text>
                     </TouchableOpacity>
+
+                    <Button style title="update location" onPress={updateLocation} />
                 </View>
             </View>
         </View>
