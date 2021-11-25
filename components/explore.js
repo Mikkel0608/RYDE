@@ -33,6 +33,7 @@ const Search = ({navigation}) => {
 
     useEffect(() => {
         const response = getLocationPermission()
+        updateLocation()
     }, []);
 
 
@@ -41,7 +42,7 @@ const Search = ({navigation}) => {
     }
 
     const onChangeDate = (event, selectedDate) => {
-        
+
         const currentDate = selectedDate || search.date;
         setSearch({...search, date: currentDate
         })};
@@ -103,7 +104,8 @@ const Search = ({navigation}) => {
                         <Text style={styles.searchButtonText}>Search</Text>
                     </TouchableOpacity>
 
-                    <Button style title="update location" onPress={updateLocation} />
+                    {/*<Button style title="update location" onPress={updateLocation} />
+                    */}
                 </View>
             </View>
         </View>

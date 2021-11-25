@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {FlatList, Text, View, TouchableOpacity, StyleSheet, SafeAreaView} from "react-native";
 import firebase from "firebase";
 import RideView from "./rideView";
+import getDistance from 'geolib/es/getDistance'
 
 
 const searchResult = ({navigation, route}) => {
@@ -10,11 +11,11 @@ const searchResult = ({navigation, route}) => {
     let search = route.params.search;
 
     useEffect(() => {
-        console.log(route.params.location)
-        console.log(Object.values(search))
+        //console.log(route.params.location)
+        //console.log(Object.values(search))
 
         try {
-            
+
 
 
             firebase.database()
@@ -33,17 +34,17 @@ const searchResult = ({navigation, route}) => {
                     let filterValues = Object.values(search)
                     for(let i=1; i<filterValues.length; i++){//i sættes til 1 da vi ikke skal bruge date, den er der allerede filtreret på
 
-                        if(filterValues[i] !== '' && filterKeys[i] !== 'radius'){ //Fjern her begrænsning på radius når det engang er lavet********************************************
+                        //if(filterValues[i] !== '' && filterKeys[i] !== 'radius'){ //Fjern her begrænsning på radius når det engang er lavet********************************************
 
                             filters.push(//array laves med filteret og værdien
                                 {
                                     filter: filterKeys[i],
-                                    val: filterValues[i] 
+                                    val: filterValues[i]
                                 }
                                 )
-                        }
+                        //}
                     }
-                
+
 
                     let res = Object.values(snapshot.val())
                     let key = Object.keys(snapshot.val())
@@ -60,22 +61,29 @@ const searchResult = ({navigation, route}) => {
                         if(res[i].cancelled === 0){
 
                             //let {startLongitude, startLatitude} = res[i] //Her hentes turens startpunkter ind************************************************
-                        
-                            
+
+
                             let filterCount = 0;
                             filters.forEach((e, x) =>{
                                 //Hvis der er et radius filter, gør da:
                                 if (e.filter=== 'radius'){
                                     //let radius = e.val;
-    
-                                    
-                                    
+
+                                    let userLocation = {latitude: route.params.location.latitude, longitude: route.params.location.longitude};
+                                    let rideLocation = {latitude: res[i].startLatitude, longitude: res[i].startLongitude}
+
+                                    //bruger getDistance fra geolib library til at udregne afstanden i meter mellem user location og ride location
+                                    let distanceToRide = getDistance(userLocation, rideLocation, 1);
+                                    //Hvis afstanden er større end den angivne radius, skal de ikke med.
+                                    if (distanceToRide<=e.val*1000) {
+                                        filterCount++;
+                                    }
                                     //Skriv her en funktion der kan finde afstanden i fugleflugt mellem de to punkter**************************************************
                                     //Hvis afstand i fugleflugt <= radius, øg da filterCount med én*********************************************************
 
 
-                                    
-    
+
+
                                 } else if (res[i][e.filter] === e.val ){//Hvis det ikke er radius skal den bare kigge direkte på værdierne
                                         filterCount++;                      //Hvis filteret matcher resultatet øges filterCount for at holde styr på hvor mange 'matches' man har
                                 }
@@ -89,6 +97,7 @@ const searchResult = ({navigation, route}) => {
 
                                 filteredResultValues.push(res[i]);
                                 filteredResultKeys.push(key[i])
+
                             }
                         }
                     }
@@ -123,7 +132,8 @@ const searchResult = ({navigation, route}) => {
 
     return (
         <View style={styles.container}>
-                {searchResults.length > 0 ?<FlatList data={resultArray} keyExtractor={(item, index) => resultKeys[index]} renderItem={({item, index}) => {
+                {searchResults.length > 0 ?
+                    <FlatList data={resultArray} keyExtractor={(item, index) => resultKeys[index]} renderItem={({item, index}) => {
                     return (
                         <View>
                         <TouchableOpacity style={styles.container} onPress={() => handleSelectResult(resultKeys[index], item)}>
