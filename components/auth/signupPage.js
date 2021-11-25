@@ -10,7 +10,7 @@ const SignUpPage = ({navigation}) => {
     const [username, setUsername] = useState('');
 
     
-    function writeUserData(user) {
+    function userData(user) {
         const {name, phone, photoUrl, uid, email, signedUp} = user;
         firebase.database()
             .ref('/users/' + user.uid)
@@ -37,7 +37,7 @@ const SignUpPage = ({navigation}) => {
                         email: u.email,
                         signedUp: new Date().getTime()
                     }
-                    writeUserData(userData)
+                    userData(userData)
 
                     //Brugerens username er blevet tilkoblet
                 }).catch((error) => {

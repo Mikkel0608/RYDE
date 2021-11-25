@@ -6,15 +6,15 @@ const dateString = (d, time_y_n) => {
         let year = date.getFullYear();
         let hours = date.getHours();
         let minutes = date.getMinutes();
+        if (minutes<10){
+            minutes = `0${minutes}`;
+        }
     if (time_y_n === 'y'){
         return(day + "/" + month + "/" + year + " " + hours + ":" + minutes);
     } else {
         return(day + "/" + month + "/" + year)
     }
 };
-
-
-
 
 
 

@@ -31,6 +31,7 @@ const MapScreen = ({navigation, route}) => {
     };
 
     const handleSubmit = () => {
+        console.log(markerAddress[0])
         if(route.name==="Pick start location") {
             navigation.navigate("Create new ride", {startAddress: markerAddress[0].name, startPostal:markerAddress[0].postalCode, startCoordinates: markerCoordinates}, true)
         } else if (route.name==="Pick destination") {

@@ -5,6 +5,8 @@ import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import firebase from "firebase";
+import func from '../functions/helperFunctions';
+
 
 const RideViewSmall = (props) => {
     const [joinedRide, setJoinedRide] = useState(false)
@@ -16,15 +18,6 @@ const RideViewSmall = (props) => {
         }
     },[])
 
-    const dateString = () => {
-        let date = new Date(props.date)
-        let day = date.getDate();
-        let month = date.getMonth()+1
-        let year = date.getFullYear()
-        let hours = date.getHours()
-        let minutes = date.getMinutes()
-        return(day + "/" + month + "/" + year + " " + hours + ":" + minutes)
-    }
 
     return (
         <View style={styles.container}>
@@ -60,7 +53,7 @@ const RideViewSmall = (props) => {
                     <Text style={styles.labelRight}>{props.distance}</Text>
                 </View>
                 <View style={styles.row}>
-                    <Text style={styles.labelLeft}>{dateString()}</Text>
+                    <Text style={styles.labelLeft}>{func.date(props.date, 'y')}</Text>
                     <Text style={styles.labelRight}>{props.speed}</Text>
                 </View>
             </View>

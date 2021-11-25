@@ -4,6 +4,8 @@ import firebase from "firebase";
 import MapView, {Marker} from "react-native-maps";
 import Constants from "expo-constants";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import func from '../functions/helperFunctions';
+
 
 const RideDetails = ({navigation, route}) => {
     const initialState = { name: '',
@@ -23,26 +25,13 @@ const RideDetails = ({navigation, route}) => {
     const [attendees, setAttendees] = useState([])
 
 
-
-    const dateString = (d) => {
-        console.log(d)
-        let date = new Date(d);
-        let day = date.getDate();
-        let month = date.getMonth()+1;
-        let year = date.getFullYear();
-        let hours = date.getHours();
-        let minutes = date.getMinutes();
-        if (minutes<10){
-            minutes = `0${minutes}`;
-        }
-        return(day + "/" + month + "/" + year + " " + hours + ":" + minutes);
-    };
-
-
     useEffect(() => {
+
+        //setting current user
         let currUser = firebase.auth().currentUser;
         setUser(currUser);
 
+        //Getting ride data from the database
         try {
             firebase.database()
                 .ref()
@@ -63,17 +52,16 @@ const RideDetails = ({navigation, route}) => {
             )
         }
 
-        console.log(dateString(ride.date))
 
 
     const handleJoinRide = () => {
-        /*Skal bruge ride state i stedet for*/
-        //if(joined === true){
-        if(attendees.filter(e => e.uid === user.uid).length===0){
+        if(attendees.filter(e => e.uid === user.uid).length===0){ //If the ride is not already joined, push a new object into the database
             firebase
                 .database()
                 .ref('Rides/'+route.params.id+'/attendees')
                     .push({uid: user.uid, username: user.displayName});
+        
+            //Updating the state after getting attendee data from database
            try {
                firebase.database()
                    .ref()
@@ -89,27 +77,30 @@ const RideDetails = ({navigation, route}) => {
         }
     }
 
+    //Handling the unjoin functionality
     function handleCancel (){
         let keys = Object.keys(ride.attendees);
         let values = Object.values(ride.attendees);
 
-        let ride_key;
+        /*Finding the users' key to query the database and remove their participancy
+        */
+        let user_key;
         let i;
         for(i=0; i<values.length; i++){
             if (values[i].uid === user.uid){
-                ride_key = keys[i];
+                user_key = keys[i];
                 break;
             }
         }
 
-        let path = `Rides/${route.params.id}/attendees/${ride_key}`;
+        //Removing the user from the attendee list of the ride in the database
+        let path = `Rides/${route.params.id}/attendees/${user_key}`;
         try {
             firebase
                 .database()
                 .ref(path)
                 .remove().then(data => console.log(data))
                 Alert.alert('You are no longer signed up for this ride')
-                //navigation.navigate("HomePage")
         } catch(e){
             Alert.alert(error.message)
         }
@@ -123,6 +114,9 @@ const RideDetails = ({navigation, route}) => {
         navigation.navigate("Ryde Profile", {profile: ride.organizer})
     }
 
+
+    //Handling pushing new comments to the database
+    //Using timestamps to keep track of when comments were made
     function addComment (){
         if(newComment.length>0){
 
@@ -142,15 +136,16 @@ const RideDetails = ({navigation, route}) => {
     }
 
 
-
+    //Handling deletion of comments
     const deleteComment = (com_key, commenter) => {
-        console.log(commenter)
 
+        //User has to accept that they want to delete their comment
+        //If they press OK, the comment will be removed from the database
+        //com_key is the unique identifier for the comment
         if(user.uid === commenter){
         Alert.alert(
             'Warning',
             'Delete the comment?',
-             // <- this part is optional, you can pass an empty string
             [
               {text: 'OK', onPress: () => {
                 let path = `Rides/${route.params.id}/comments/${com_key}`;
@@ -169,6 +164,7 @@ const RideDetails = ({navigation, route}) => {
         }
       };
 
+      //Handling cancellation of rides for the ride-creators
       const cancelRide = () =>{
         Alert.alert(
             'Warning',
@@ -197,7 +193,7 @@ const RideDetails = ({navigation, route}) => {
 
 
 
-
+    //Comment component that produces a list of the comments showing displayname, date and comment
     const Comments = () =>{
         let commentArray;
         let commentKeys;
@@ -209,10 +205,11 @@ const RideDetails = ({navigation, route}) => {
     }
         if(commentArray) {
         return (
+            //for every comment, this will be rendered
             commentArray.map((item, index) => {
                 return(
                 <View style={styles.row2} key={index}>
-                    <Text style={styles.dateText}>{dateString(item.date)}</Text>
+                    <Text style={styles.dateText}>{func.date(item.date, 'y')}</Text>
                     <TouchableOpacity style={styles.rowText} onPress={()=> navigation.navigate("Ryde Profile", {profile: item})}>
                         <Text style={{fontSize: 15, color:'red'}}>{item.displayName}: </Text>
                     </TouchableOpacity>
@@ -226,33 +223,10 @@ const RideDetails = ({navigation, route}) => {
         } else {
             return (<Text/>)
         }
-            /*
-            <FlatList style={styles.container} data={commentArray} keyExtractor={(item, index) => commentKeys[index]} renderItem={({item, index}) => {
-                return (
-                    <View style={styles.row2}>
-                        <Text style={styles.dateText}>{dateString(item.date)}</Text>
-                        <TouchableOpacity style={styles.rowText} onPress={()=> navigation.navigate("Ryde Profile", {profile: item})}>
-                            <Text style={{fontSize: 15, color:'red'}}>{item.displayName}: </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.rowText} onPress={()=>deleteComment(commentKeys[index], commentArray[index].uid)}>
-                            <Text style={styles.rowText}>{item.comment}</Text>
-                        </TouchableOpacity>
-
-                    </View>
-
-                )
-            }}
-            />
-
-             */
-
-
     }
 
 
-
-
-
+    //Join button component. If the current user is part of the attendees array, Ride Joined will be shown instead.
     const JoinButton = () => {
         //if(joined === true){
         if(attendees.filter(e => e.uid === user.uid).length > 0) {
@@ -271,6 +245,7 @@ const RideDetails = ({navigation, route}) => {
     }
 
 
+    //Cancel ride button for ride creators
     const CancelButton = () => {
         if(ride.organizer.uid === user.uid){
             return (
@@ -280,6 +255,7 @@ const RideDetails = ({navigation, route}) => {
             )
         }
 
+    //Unjoin ride button for ride attendees
         if(attendees.filter(e => e.uid === user.uid).length === 1){
             return (
                 <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
@@ -318,7 +294,7 @@ const RideDetails = ({navigation, route}) => {
                             <Text> Organizer: {ride.organizer.username}</Text>
                             <Ionicons name="chevron-forward-outline" size={15}/>
                         </TouchableOpacity>
-                        <Text>{dateString(ride.date)}</Text>
+                        <Text>{func.date(ride.date, 'y')}</Text>
                     </View>
                     <View style={styles.row}>
                         <TouchableOpacity style={styles.participantContainer} onPress={showParticipants}>

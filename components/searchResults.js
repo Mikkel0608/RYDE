@@ -5,19 +5,15 @@ import RideView from "./rideView";
 import getDistance from 'geolib/es/getDistance'
 
 
+//Handling the search results that gets viewed on screen
 const searchResult = ({navigation, route}) => {
     const [searchResults, setSearchResults] = useState([]);
     const [searchResultsKey, setSearchResultsKeys] = useState([]);
     let search = route.params.search;
 
     useEffect(() => {
-        //console.log(route.params.location)
-        //console.log(Object.values(search))
-
         try {
-
-
-
+            //Getting all rides within the selected date
             firebase.database()
                 .ref()
                 .child("Rides")
@@ -27,14 +23,14 @@ const searchResult = ({navigation, route}) => {
                 .on('value', snapshot => {
                     if(snapshot.val() !== null){
 
-                    //Laver et array af de forskellige filtre
-                    //For at slippe for en masse if-statements når man skal filtrere forskellige søgninger
+                    //Creating an array of the filters used by the user
+                    //Firebase won't let us do compound queries, so...
                     let filters = [];
                     let filterKeys = Object.keys(search);
                     let filterValues = Object.values(search)
-                    for(let i=1; i<filterValues.length; i++){//i sættes til 1 da vi ikke skal bruge date, den er der allerede filtreret på
+                    for(let i=1; i<filterValues.length; i++){//i is set to 1, since date is the first filter, and that one has already been filtered using firebase
 
-                        if(filterValues[i] !== ''/* && filterKeys[i] !== 'radius'*/){ //Fjern her begrænsning på radius når det engang er lavet********************************************
+                        if(filterValues[i] !== ''){ //If something has actually been entered in the filters field
 
                             filters.push(//array laves med filteret og værdien
                                 {
@@ -44,58 +40,41 @@ const searchResult = ({navigation, route}) => {
                                 )
                         }
                     }
-                    console.log(filters)
 
 
-                    let res = Object.values(snapshot.val())
+                    let res = Object.values(snapshot.val()) //result values and keys
                     let key = Object.keys(snapshot.val())
-
-                    let i;
-                    let filteredResultValues = [];
+                    
+                    let filteredResultValues = []; //filtered result values and keys
                     let filteredResultKeys = [];
-                    //console.log(res[0])
-
-                    //let {longitude, latitude}; //HENT HER BRUGERENS LOKATION IND*******************************************
-
-                    /*Der skal kun vises rides som ikke er cancelled*/
+                    let i;
                     for (i=0; i<res.length; i++){
-                        if(res[i].cancelled === 0){
+                        if(res[i].cancelled === 0){ //If the ride has a cancelled value of 1, then it should not be shown
 
-                            //let {startLongitude, startLatitude} = res[i] //Her hentes turens startpunkter ind************************************************
+                            let filterCount = 0; //Creating a count for every time a filter matches one of the rides 
+                            filters.forEach((e, x) =>{ //Checking that the rides match every filter
 
-
-                            let filterCount = 0;
-                            filters.forEach((e, x) =>{
-                                //Hvis der er et radius filter, gør da:
                                 if (e.filter=== 'radius'){
-                                    //let radius = e.val;
 
                                     let userLocation = {latitude: route.params.location.latitude, longitude: route.params.location.longitude};
                                     let rideLocation = {latitude: res[i].startLatitude, longitude: res[i].startLongitude}
 
-                                    //bruger getDistance fra geolib library til at udregne afstanden i meter mellem user location og ride location
+                                    //Using getDistance from geolib library to calculate the distance i meters between user location and ride location
                                     let distanceToRide = getDistance(userLocation, rideLocation, 1);
+
                                     //Hvis afstanden er større end den angivne radius, skal de ikke med.
-                                    console.log(distanceToRide)
+                                    //If the distance is less than or equal to the radius chosen by user, they are included
                                     if (distanceToRide<=e.val*1000) {
                                         filterCount++;
                                     }
-                                    //Skriv her en funktion der kan finde afstanden i fugleflugt mellem de to punkter**************************************************
-                                    //Hvis afstand i fugleflugt <= radius, øg da filterCount med én*********************************************************
-
-
-
-
-                                } else if (res[i][e.filter] === e.val ){//Hvis det ikke er radius skal den bare kigge direkte på værdierne
-                                        filterCount++;                      //Hvis filteret matcher resultatet øges filterCount for at holde styr på hvor mange 'matches' man har
+                                } else if (res[i][e.filter] === e.val ){//All other filters than radius just looks directly at the values
+                                        filterCount++;                      
                                 }
-
-
-
 
                             })
 
-                            if(filterCount === filters.length){//Hvis alle kriterierne er opfyldte, tilføjes turen til det endelige array
+                            //filtercount shows how many matches with the filters a ride has
+                            if(filterCount === filters.length){
 
                                 filteredResultValues.push(res[i]);
                                 filteredResultKeys.push(key[i])
@@ -103,13 +82,8 @@ const searchResult = ({navigation, route}) => {
                             }
                         }
                     }
-
-
                     setSearchResultsKeys(filteredResultKeys)
                     setSearchResults(filteredResultValues);
-
-                    //gammel kode, hvis man ikke fjerner cancelled rides
-                    //setSearchResults(snapshot.val());
                 }
                 })
         } catch (error) {
@@ -124,14 +98,9 @@ const searchResult = ({navigation, route}) => {
     }
 
 
-    //gammel kode, før cancel
-    //const resultArray = Object.values(searchResults);
-    //const resultKeys = Object.keys(searchResults);
-
 
     const resultArray = searchResults;
     const resultKeys = searchResultsKey;
-
     return (
         <View style={styles.container}>
                 {searchResults.length > 0 ?

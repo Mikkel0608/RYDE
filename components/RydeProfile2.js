@@ -12,18 +12,17 @@ import {
 } from 'react-native';
 import func from '../functions/helperFunctions';
 import Ionicons from "react-native-vector-icons/Ionicons";
-import {Touchable} from "react-native-web";
 
 const RydeProfile = ({navigation, route}) => {
     const [profile, setProfile] = useState({});
-    const [createdRidesCount, setCreatedRidesCount] = useState(0);
-    const [user, setUser] = useState({});
     const [menuVisible, setMenuVisible] = useState(false);
 
 
     let uid;
-    //let uid = route.params.profile.uid;
     React.useLayoutEffect(() => {
+
+        //If route.params is undefined, then the user is viewing this page from the tab navigator
+        //Then the uid will be the current user instead
         if (!route.params) {
             uid = firebase.auth().currentUser.uid;
                 navigation.setOptions({
@@ -33,11 +32,12 @@ const RydeProfile = ({navigation, route}) => {
                         </TouchableOpacity>
                     ),
                 });
-        } else {
+        } else { //otherwise, the uid will be found in route.params
             uid = route.params.profile.uid;
         }
     },[])
 
+    //Setting menu state to true to make it visible
     const handleMenu = () => {
         setMenuVisible(true);
     };
@@ -48,9 +48,8 @@ const RydeProfile = ({navigation, route}) => {
     };
 
     useEffect(() => {
-        let currUser = firebase.auth().currentUser;
-        setUser(currUser);
 
+        //Getting user data using uid and updating profile state
         try {
             firebase.database()
             .ref()
@@ -58,6 +57,8 @@ const RydeProfile = ({navigation, route}) => {
             .orderByKey()
             .on('value', snapshot => {
                 let prof = Object.values(snapshot.val())[0]
+
+                //Getting the firebase unique identifier and appending it to the object. For easier lookup in database in updateInfo.js
                 prof.key = Object.keys(snapshot.val())[0]
 
 
@@ -68,42 +69,11 @@ const RydeProfile = ({navigation, route}) => {
 
         }
 
-        //Kan ikke få det her til at virke ordentligt
-/*
-        try{
-            firebase
-                .database()
-                .ref()
-                .child('Rides')
-                //.orderByChild('organizer/uid')
-                //.equalTo(profile.uid) Hvorfor virker det her lort ikke???
-                .on('value', snapshot => {
-                    if (snapshot.val() !== null){
-
-
-
-                    let rides = Object.values(snapshot.val())
-
-                    //Manuel optælling af rides som man selv har lavet
-                    let count = 0;
-                    let i;
-                    for(i=0; i<rides.length; i++){
-                        if(rides[i].organizer.uid === profile.uid){
-                            count ++;
-                        }
-                    }
-
-                    setCreatedRidesCount(count);
-                    }
-                })
-        }catch(e){
-            console.error(e)
-        }
-        */
-
 
 
     }, []);
+
+    //setting the menu state to false to make it disappear
     const handleSignout = async () => {
         setMenuVisible(false);
         await firebase.auth().signOut();

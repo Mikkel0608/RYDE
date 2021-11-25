@@ -1,7 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useEffect, useState} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import firebase from 'firebase';
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {NavigationContainer} from "@react-navigation/native";
@@ -9,10 +8,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Search from "./explore";
 import NewRide from './newRide';
 import Home from './home'
-import Profile from "./profile";
 import searchResult from "./searchResults";
 import MapScreen from "./mapScreen";
-import {SafeAreaView} from "react-native";
 import RideDetails from "./rideDetails";
 import RideParticipants from "./rideParticipants";
 import LogoHeader from "./logoHeader";
