@@ -34,7 +34,7 @@ const searchResult = ({navigation, route}) => {
                     let filterValues = Object.values(search)
                     for(let i=1; i<filterValues.length; i++){//i sættes til 1 da vi ikke skal bruge date, den er der allerede filtreret på
 
-                        //if(filterValues[i] !== '' && filterKeys[i] !== 'radius'){ //Fjern her begrænsning på radius når det engang er lavet********************************************
+                        if(filterValues[i] !== ''/* && filterKeys[i] !== 'radius'*/){ //Fjern her begrænsning på radius når det engang er lavet********************************************
 
                             filters.push(//array laves med filteret og værdien
                                 {
@@ -42,8 +42,9 @@ const searchResult = ({navigation, route}) => {
                                     val: filterValues[i]
                                 }
                                 )
-                        //}
+                        }
                     }
+                    console.log(filters)
 
 
                     let res = Object.values(snapshot.val())
@@ -75,6 +76,7 @@ const searchResult = ({navigation, route}) => {
                                     //bruger getDistance fra geolib library til at udregne afstanden i meter mellem user location og ride location
                                     let distanceToRide = getDistance(userLocation, rideLocation, 1);
                                     //Hvis afstanden er større end den angivne radius, skal de ikke med.
+                                    console.log(distanceToRide)
                                     if (distanceToRide<=e.val*1000) {
                                         filterCount++;
                                     }

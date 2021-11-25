@@ -21,7 +21,6 @@ const UpdateProfile = ({navigation, route}) => {
     
     function updateUserData(updatedInfo) {
         const {phone, cyclingType, description, age, cyclingExperience} = updatedInfo;
-        console.log(updatedInfo);
         
         firebase.database()
             .ref(`users/${profile.uid}/${profile.key}`)

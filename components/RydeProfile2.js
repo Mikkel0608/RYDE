@@ -119,7 +119,7 @@ const RydeProfile = ({navigation, route}) => {
       <ScrollView style={styles.container}>
           <View style={styles.headerContainer}>
               <View style={styles.header}/>
-              <Image style={styles.avatar} source={{uri: 'https://i1.sndcdn.com/artworks-000191905223-aujjxt-t500x500.jpg'}}/>
+              <Image style={styles.avatar} source={{uri: 'https://i.pinimg.com/originals/3f/94/70/3f9470b34a8e3f526dbdb022f9f19cf7.jpg'}}/>
               <Text style={styles.name}>{profile.name}</Text>
               <Text style={styles.row}>User since: {func.date(profile.signedUp)} </Text>
           </View>
