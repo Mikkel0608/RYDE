@@ -25,12 +25,16 @@ const RideDetails = ({navigation, route}) => {
 
 
     const dateString = (d) => {
+        console.log(d)
         let date = new Date(d);
         let day = date.getDate();
         let month = date.getMonth()+1;
         let year = date.getFullYear();
         let hours = date.getHours();
         let minutes = date.getMinutes();
+        if (minutes<10){
+            minutes = `0${minutes}`;
+        }
         return(day + "/" + month + "/" + year + " " + hours + ":" + minutes);
     };
 
@@ -59,6 +63,7 @@ const RideDetails = ({navigation, route}) => {
             )
         }
 
+        console.log(dateString(ride.date))
 
 
     const handleJoinRide = () => {
@@ -104,7 +109,7 @@ const RideDetails = ({navigation, route}) => {
                 .ref(path)
                 .remove().then(data => console.log(data))
                 Alert.alert('You are no longer signed up for this ride')
-                navigation.navigate("HomePage")
+                //navigation.navigate("HomePage")
         } catch(e){
             Alert.alert(error.message)
         }
@@ -451,8 +456,8 @@ const styles = StyleSheet.create({
     row2: {
         marginVertical: 10,
         marginHorizontal: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "lightgrey",
+        //borderBottomWidth: 1,
+        //borderBottomColor: "lightgrey",
         textAlign: "left",
         height: 50,
     },
