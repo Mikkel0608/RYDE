@@ -18,16 +18,6 @@ const RideView = (props) => {
         }
     },[])
 
-    const dateString = () => {
-        let date = new Date(props.date)
-        let day = date.getDate();
-        let month = date.getMonth()+1
-        let year = date.getFullYear()
-        let hours = date.getHours()
-        let minutes = date.getMinutes()
-        return(day + "/" + month + "/" + year + " " + hours + ":" + minutes)
-    }
-
     return (
         <View style={styles.container}>
                 <View style={styles.mapContainer}>
