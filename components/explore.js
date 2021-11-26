@@ -26,18 +26,14 @@ const Search = ({navigation}) => {
     const updateLocation = async () => {
         await Location.getCurrentPositionAsync({accuracy: Accuracy.Balanced}).then((item)=>{
             setCurrentLocation(item.coords)
-            return currentLocation;
-        } );
+        });
    };
+   updateLocation().then()
 
     useEffect(() => {
         const response = getLocationPermission()
+        
     }, []);
-
-
-    const changeTextInput = (name, event) => {
-        setSearch({...search, [name]: event})
-    }
 
     const onChangeDate = (event, selectedDate) => {
 
@@ -49,9 +45,10 @@ const Search = ({navigation}) => {
         if(search.date.getDate() < new Date().getDate() ){
             Alert.alert('Please select a valid date')
         } else {
-            updateLocation().then(d => {
-                navigation.navigate("Search Results", {search: search, location: currentLocation})
-            })
+            //updateLocation().then(d => {
+              //  navigation.navigate("Search Results", {search: search, location: currentLocation})
+            //})
+            navigation.navigate("Search Results", {search: search, location: currentLocation})
         }
     }
 
@@ -87,6 +84,8 @@ const Search = ({navigation}) => {
                                    options={['Beginner: 20 km/h', 'Intermediate: 25 km/h', 'Experienced: 30 km/h', 'Pro: 35+ km/h']}
                                    onSelect={(index, value) => setSearch({...search, speed: value})}/>
                 </View>
+                {
+                 currentLocation !== null ?
                 <View style={styles.row}>
                     <Text style={styles.textLabels}>Radius (km)</Text>
                     <TextInput style={styles.input}
@@ -95,9 +94,12 @@ const Search = ({navigation}) => {
                                maxLength={50}
                                keyboardType={'number-pad'}
                                returnKeyType='done'
-                               onChangeText={(value) => setSearch({...search, radius: value})}
+                               onChangeText={(value) => 
+                                    setSearch({...search, radius: value})
+                                }
                     />
                 </View>
+                : null}
 
                 <View style={styles.searchButtonContainer}>
                     <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
