@@ -5,6 +5,8 @@ import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import firebase from "firebase";
+import func from '../functions/helperFunctions';
+
 
 const RideView = (props) => {
     const [joinedRide, setJoinedRide] = useState(false)
@@ -60,7 +62,7 @@ const RideView = (props) => {
                     <Text style={styles.labelRight}>{props.distance}</Text>
                 </View>
                 <View style={styles.row}>
-                    <Text style={styles.labelLeft}>{dateString()}</Text>
+                    <Text style={styles.labelLeft}>{func.date(props.date, 'y')}</Text>
                     <Text style={styles.labelRight}>{props.speed}</Text>
                 </View>
             </View>

@@ -21,19 +21,17 @@ const Search = ({navigation}) => {
         await Location.requestForegroundPermissionsAsync().then((item)=>{
             setlocationPermission(item.granted)
         } );
-
     };
 
     const updateLocation = async () => {
         await Location.getCurrentPositionAsync({accuracy: Accuracy.Balanced}).then((item)=>{
             setCurrentLocation(item.coords)
-            console.log(currentLocation)
+            return currentLocation;
         } );
    };
 
     useEffect(() => {
         const response = getLocationPermission()
-        updateLocation()
     }, []);
 
 
@@ -51,7 +49,9 @@ const Search = ({navigation}) => {
         if(search.date.getDate() < new Date().getDate() ){
             Alert.alert('Please select a valid date')
         } else {
-            navigation.navigate("Search Results", {search: search, location: currentLocation})
+            updateLocation().then(d => {
+                navigation.navigate("Search Results", {search: search, location: currentLocation})
+            })
         }
     }
 

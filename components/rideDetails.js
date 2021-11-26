@@ -177,7 +177,7 @@ const RideDetails = ({navigation, route}) => {
                         .database()
                         .ref(path)
                         .update({cancelled: 1}).then()
-                        Alert.alert('cancelled')
+                        Alert.alert('Ride cancelled')
                         navigation.navigate("HomePage")
                 } catch(e){
                     Alert.alert(error.message)
