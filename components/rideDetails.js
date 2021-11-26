@@ -60,7 +60,7 @@ const RideDetails = ({navigation, route}) => {
                 .database()
                 .ref('Rides/'+route.params.id+'/attendees')
                     .push({uid: user.uid, username: user.displayName});
-        
+
             //Updating the state after getting attendee data from database
            try {
                firebase.database()
@@ -318,26 +318,25 @@ const RideDetails = ({navigation, route}) => {
                         : <Text><Text style={{color:"red"}}>Description:</Text> {ride.description}</Text>}
 
                     </View>
+                    <View style={styles.joinRideButtonContainer}>
+                        <JoinButton/>
+                        <CancelButton/>
+                    </View>
                     <View style={styles.row}>
                         {ride.comments ?
-                        <Text style={{color:"black"}}>Comments:</Text>
+                        <Text style={{paddingTop: 15, fontSize: 20, color:"black"}}>Comments</Text>
                         : null }
 
                     </View>
                     <Comments/>
-
-
-
-            <View style={styles.joinRideButtonContainer}>
-                <TextInput style={styles.input}
-                           selectionColor={"red"}
-                           placeholder={"Add a comment!"}
-                           onChangeText={(value) => setNewComment(value)}
-                               />
-                {newComment? <Button title="Add comment" onPress={addComment}></Button> : null }
-                <JoinButton/>
-                <CancelButton/>
-            </View>
+                    <View style={styles.joinRideButtonContainer}>
+                        <TextInput style={styles.input}
+                                   selectionColor={"red"}
+                                   placeholder={"Add a comment!"}
+                                   onChangeText={(value) => setNewComment(value)}
+                        />
+                        {newComment? <Button title="Add comment" onPress={addComment}/> : null }
+                    </View>
             </View>
             </KeyboardAvoidingView>
         </ScrollView>
@@ -385,7 +384,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     cancelButton: {
-        width: 100,
+        width: 200,
         height: 30,
         borderRadius: 20,
         marginTop: 33,
@@ -428,6 +427,7 @@ const styles = StyleSheet.create({
         width: 170,
         fontSize: 20,
         textAlign: "center",
+        paddingTop: 20,
     },
     row2: {
         marginVertical: 10,

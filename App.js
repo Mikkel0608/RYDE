@@ -1,12 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {LogBox, StyleSheet, Text, View} from 'react-native';
 import firebase from 'firebase';
 import { createStackNavigator } from "@react-navigation/stack";
 import {NavigationContainer} from "@react-navigation/native";
 import LoginPage from "./components/auth/loginPage";
 import SignUpPage from "./components/auth/signupPage";
 import AppNavigator from "./components/appnavigator";
+
+
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications'
 
 const firebaseConfig = {
   apiKey: "AIzaSyBmGIDjwGzb-bh8jjREFXv6ZIdU3-tYarc",
