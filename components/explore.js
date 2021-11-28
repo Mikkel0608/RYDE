@@ -36,13 +36,15 @@ const Search = ({navigation}) => {
     }, []);
 
     const onChangeDate = (event, selectedDate) => {
-
         const currentDate = selectedDate || search.date;
         setSearch({...search, date: currentDate
         })};
 
     const handleSearch = () => {
-        if(search.date.getDate() < new Date().getDate() ){
+        let d = search.date;
+        d.setHours(23, 59, 59, 0);
+
+        if(d.getTime() < new Date().getTime() ){
             Alert.alert('Please select a valid date')
         } else {
             //updateLocation().then(d => {
