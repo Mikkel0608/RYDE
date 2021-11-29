@@ -6,7 +6,7 @@ import firebase from "firebase";
 const UpdateProfile = ({navigation, route}) => {
 
     const [profile, setProfile] = useState(route.params.profile)
-    
+
 
     //Creating states with initial states of the users' current data
     //If the properties don't exist in the database (they don't when a user is created), initial states are empty strings
@@ -22,8 +22,8 @@ const UpdateProfile = ({navigation, route}) => {
     //Updating user data in database using update method
     function updateUserData(updatedInfo) {
         const {phone, cyclingType, description, age, cyclingExperience} = updatedInfo;
-        
-        
+
+
         firebase.database()
             .ref(`users/${profile.uid}/${profile.key}`)
             .update({phone, cyclingType, description, age, cyclingExperience})
@@ -42,7 +42,7 @@ const UpdateProfile = ({navigation, route}) => {
 
         <View style={styles.container}>
             <View style={styles.loginContainer}>
-                <Text style={styles.loginHeader}> Update RYDE Profile Info </Text>
+                <Text style={styles.loginHeader}>Update RYDE Profile Info </Text>
                 <Text style={styles.loginText}>Phone</Text>
                 <TextInput style={styles.input}
                            placeholder={profile.phone}
